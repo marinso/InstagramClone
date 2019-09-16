@@ -9,11 +9,14 @@
 import UIKit
 import FirebaseAuth
 
-class SignUpVC: UIViewController {
+class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    var imageSelected = false
     
     let addPhotoButton:UIButton = {
        let btn = UIButton(type: .system)
         btn.setImage(#imageLiteral(resourceName: "plus_photo"), for: .normal)
+        btn.addTarget(self, action: #selector(handleAddAvatar), for: .touchUpInside)
         return btn
     }()
     
@@ -102,6 +105,22 @@ class SignUpVC: UIViewController {
         stack.anchor(top: addPhotoButton.bottomAnchor, bottom: nil, left: view.leftAnchor, right: view.rightAnchor, paddingTop: 24, paddingBottom: 0, paddingLeft: 40, paddingRight: 40, width: 0, height: 240)
     }
     
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let picture = info[UIImagePickerController.InfoKey.editedImage] as? UIImage else {
+            imageSelected = false
+            return }
+        
+        imageSelected = true
+        
+        addPhotoButton.layer.cornerRadius = addPhotoButton.frame.size.width / 2
+        addPhotoButton.layer.borderColor = UIColor.black.cgColor
+        addPhotoButton.layer.borderWidth = 2
+        addPhotoButton.layer.masksToBounds = true
+        addPhotoButton.setImage(picture.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     @objc func navigationToSignIn() {
         navigationController?.popViewController(animated: true)
     }
@@ -121,10 +140,20 @@ class SignUpVC: UIViewController {
         }
     }
     
+    @objc func handleAddAvatar() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        
+        self.present(imagePicker, animated: true)
+    }
+    
     @objc func formValidation() {
         guard
             emailTextField.hasText,
-            passwordTextField.hasText else {
+            passwordTextField.hasText,
+            imageSelected == true
+        else {
                 signUpButton.isEnabled = false
                 signUpButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
                 return
