@@ -8,6 +8,8 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseStorage
+import FirebaseDatabase
 
 class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
@@ -83,7 +85,6 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         super.viewDidLoad()
         
         view.backgroundColor = .white
-        
         view.addSubview(addPhotoButton)
         
         addPhotoButton.anchor(top: view.topAnchor, bottom: nil, left: nil, right: nil, paddingTop: 60, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 140, height: 140)
@@ -128,17 +129,61 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
     @objc func clickedSignUp() {
         guard let email = emailTextField.text else { return }
         guard let password = passwordTextField.text else { return }
+        guard let username = usernameTextField.text else { return }
+        guard let fullName = fullNameTextField.text else { return }
         
-        Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+        Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
             // handle error
             if let error = error {
                 print("Failed to create user with error: ", error.localizedDescription)
                 return
             }
-            // handle success
-            print("User successfully created with Firebase!")
+            
+            // set picture
+            guard let image = self.addPhotoButton.imageView?.image else { return }
+            guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
+        
+            let filename = NSUUID().uuidString
+            
+            // UPDATE: - In order to get download URL must add filename to storage ref like this
+            let storageRef = Storage.storage().reference().child("profile_images").child(filename)
+            
+            storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
+                
+                // handle error
+                if let error = error {
+                    print("Failed to upload image to Firebase Storage with error", error.localizedDescription)
+                    return
+                }
+                
+                // UPDATE: - Firebase 5 must now retrieve download url
+                storageRef.downloadURL(completion: { (downloadURL, error) in
+                    guard let profileImageUrl = downloadURL?.absoluteString else {
+                        print("DEBUG: Profile image url is nil")
+                        return
+                    }
+                    
+                    // user id
+                    guard let uid = authResult?.user.uid else { return }
+                    
+                    let dictionaryValues = ["name": fullName,
+                                            "username": username,
+                                            "profileImageUrl": profileImageUrl]
+                    
+                    let values = [uid: dictionaryValues]
+                    
+                    // save user info to database
+                    Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (error, ref) in
+                        if let error = error {
+                            print("DEBUG: Failed saving data to firebase", error.localizedDescription)
+                            return
+                        }
+                    })
+                })
+            })
         }
     }
+    
     
     @objc func handleAddAvatar() {
         let imagePicker = UIImagePickerController()
@@ -152,6 +197,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         guard
             emailTextField.hasText,
             passwordTextField.hasText,
+            usernameTextField.hasText,
+            fullNameTextField.hasText,
             imageSelected == true
         else {
                 signUpButton.isEnabled = false
