@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class LoginVC: UIViewController {
     
@@ -28,6 +29,7 @@ class LoginVC: UIViewController {
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
+        tf.addTarget(self, action:#selector(formValidation), for: .editingChanged)
         return tf
     }()
     
@@ -37,6 +39,7 @@ class LoginVC: UIViewController {
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
+        tf.addTarget(self, action:#selector(formValidation), for: .editingChanged)
         return tf
     }()
     
@@ -46,6 +49,8 @@ class LoginVC: UIViewController {
         lb.setTitleColor(.white, for: .normal)
         lb.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
         lb.layer.cornerRadius = 5
+        lb.isEnabled = false
+        lb.addTarget(self, action: #selector(loginButtonCliced), for: .touchUpInside)
         return lb
     }()
     
@@ -86,5 +91,34 @@ class LoginVC: UIViewController {
     
     @objc func navigationToSignUp() {
         navigationController?.pushViewController(SignUpVC(), animated: true)
+    }
+    
+    @objc func formValidation() {
+        guard
+            emailTextField.hasText,
+            passwordTextField.hasText
+        else {
+            loginButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+            loginButton.isEnabled = false
+            return
+        }
+        
+        loginButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        loginButton.isEnabled = true
+    }
+    
+    @objc func loginButtonCliced() {
+        guard
+            let email = emailTextField.text,
+            let password = passwordTextField.text else { return }
+        
+        Auth.auth().signIn(withEmail: email, link: password) { (authDataResult, error) in
+            if let error = error {
+                print("Unable to sign user in with error", error.localizedDescription)
+                return
+            }
+            
+            print("success")
+        }
     }
 }
