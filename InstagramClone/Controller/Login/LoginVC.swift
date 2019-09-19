@@ -119,8 +119,7 @@ class LoginVC: UIViewController {
                 return
             }
             
-            guard let mainTabVC = UIApplication.shared.keyWindow?.rootViewController as? MainTabVC else { return }
-            mainTabVC.configureViewControllers()
+            guard (UIApplication.shared.keyWindow?.rootViewController as? MainTabVC) != nil else { return }
             self.dismiss(animated: true, completion: nil)
         })
     }
