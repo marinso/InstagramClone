@@ -38,6 +38,7 @@ class LoginVC: UIViewController {
         tf.placeholder = "Password"
         tf.font = UIFont.systemFont(ofSize: 14)
         tf.borderStyle = .roundedRect
+        tf.isSecureTextEntry = true
         tf.backgroundColor = UIColor(white: 0, alpha: 0.03)
         tf.addTarget(self, action:#selector(formValidation), for: .editingChanged)
         return tf
@@ -112,13 +113,14 @@ class LoginVC: UIViewController {
             let email = emailTextField.text,
             let password = passwordTextField.text else { return }
         
-        Auth.auth().signIn(withEmail: email, link: password) { (authDataResult, error) in
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (authDataResult, error) in
             if let error = error {
                 print("Unable to sign user in with error", error.localizedDescription)
                 return
             }
             
-            print("success")
-        }
+            let mainTabVC = MainTabVC()
+            self.present(mainTabVC, animated: true, completion: nil)
+        })
     }
 }
