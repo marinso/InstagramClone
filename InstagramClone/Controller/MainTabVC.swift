@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class MainTabVC: UITabBarController, UITabBarControllerDelegate{
 
@@ -15,6 +16,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate{
 
         self.delegate = self
         configureViewControllers()
+        checkIfUserIsSignIn()
     }
     
     func configureViewControllers() {
@@ -37,5 +39,15 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate{
         navController.navigationBar.tintColor = .black
         
         return navController
+    }
+    
+    func checkIfUserIsSignIn() {
+        if Auth.auth().currentUser == nil {
+            DispatchQueue.main.async {
+                self.present(UINavigationController(rootViewController: LoginVC()), animated: true, completion: nil)
+            }
+        }
+        
+        print("user is sign in")
     }
 }

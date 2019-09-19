@@ -66,6 +66,55 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		8373E39E2333D66C00E00768 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				83F4F72C232BB05500D9C6B8 /* LoginVC.swift */,
+				83F4F731232C0A0C00D9C6B8 /* SignUpVC.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		8373E39F2333D68D00E00768 /* Feed */ = {
+			isa = PBXGroup;
+			children = (
+				83C85DA7233390D600FDCA16 /* FeedVC.swift */,
+			);
+			path = Feed;
+			sourceTree = "<group>";
+		};
+		8373E3A02333D69300E00768 /* Search */ = {
+			isa = PBXGroup;
+			children = (
+				83C85DA9233391E700FDCA16 /* SearchVC.swift */,
+			);
+			path = Search;
+			sourceTree = "<group>";
+		};
+		8373E3A12333D69900E00768 /* UploadPost */ = {
+			isa = PBXGroup;
+			children = (
+				83C85DAB2333920900FDCA16 /* UploadPostVC.swift */,
+			);
+			path = UploadPost;
+			sourceTree = "<group>";
+		};
+		8373E3A22333D6A600E00768 /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				83C85DAD2333923800FDCA16 /* NotificationsVC.swift */,
+			);
+			path = Notifications;
+			sourceTree = "<group>";
+		};
+		8373E3A32333D6AF00E00768 /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				83C85DAF2333926800FDCA16 /* UserProfileVC.swift */,
+			);
+			path = UserProfile;
+			sourceTree = "<group>";
+		};
 		83F4F70A232BAFE900D9C6B8 = {
 			isa = PBXGroup;
 			children = (
@@ -118,14 +167,13 @@
 		83F4F72B232BB01D00D9C6B8 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				83F4F72C232BB05500D9C6B8 /* LoginVC.swift */,
-				83F4F731232C0A0C00D9C6B8 /* SignUpVC.swift */,
+				8373E39E2333D66C00E00768 /* Login */,
+				8373E39F2333D68D00E00768 /* Feed */,
+				8373E3A02333D69300E00768 /* Search */,
+				8373E3A12333D69900E00768 /* UploadPost */,
+				8373E3A22333D6A600E00768 /* Notifications */,
+				8373E3A32333D6AF00E00768 /* UserProfile */,
 				83C85DA52332969B00FDCA16 /* MainTabVC.swift */,
-				83C85DA7233390D600FDCA16 /* FeedVC.swift */,
-				83C85DA9233391E700FDCA16 /* SearchVC.swift */,
-				83C85DAB2333920900FDCA16 /* UploadPostVC.swift */,
-				83C85DAD2333923800FDCA16 /* NotificationsVC.swift */,
-				83C85DAF2333926800FDCA16 /* UserProfileVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

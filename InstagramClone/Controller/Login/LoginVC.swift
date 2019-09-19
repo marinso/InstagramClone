@@ -66,7 +66,7 @@ class LoginVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // hide navigation
+
         navigationController?.navigationBar.isHidden = true
         view.backgroundColor = .white
         
@@ -119,8 +119,9 @@ class LoginVC: UIViewController {
                 return
             }
             
-            let mainTabVC = MainTabVC()
-            self.present(mainTabVC, animated: true, completion: nil)
+            guard let mainTabVC = UIApplication.shared.keyWindow?.rootViewController as? MainTabVC else { return }
+            mainTabVC.configureViewControllers()
+            self.dismiss(animated: true, completion: nil)
         })
     }
 }
