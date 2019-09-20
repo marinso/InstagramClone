@@ -23,7 +23,7 @@ class User {
         if let fullname = dictionary["name"] as? String {
             self.fullname = fullname
         }
-        if let profileImgUrl = dictionary["profileImgUrl"] as? String {
+        if let profileImgUrl = dictionary["profileImageUrl"] as? String {
             self.profileImgUrl = profileImgUrl
         }
     }
