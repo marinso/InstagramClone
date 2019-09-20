@@ -13,6 +13,8 @@ private let reuseIdentifier = "Cell"
 private let headerIdentifier = "ProfileHeader"
 
 class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+
+    var user: User?
     
     // MARK: - Properties
     override func viewDidLoad() {
@@ -21,7 +23,6 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         self.collectionView!.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         self.collectionView.backgroundColor = .white
-        fetchUserData()
     }
 
     // MARK: - UICollectionView
@@ -41,6 +42,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerIdentifier, for: indexPath) as! ProfileHeader
+        fetchUserData(header: header)
         return header
     }
     
@@ -54,12 +56,19 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     // MARK: - API
     
-    func fetchUserData() {
+    func fetchUserData(header: ProfileHeader) {
         guard let currentUID = Auth.auth().currentUser?.uid else { return }
         
-        Database.database().reference().child("users").child(currentUID).child("username").observe(.value) { (snapshot) in
-            guard let username = snapshot.value as? String else { return }
-            self.navigationItem.title = username
+        Database.database().reference().child("users").child(currentUID).observe(.value) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
+            
+            self.user = User(uid: currentUID, dictionary: dictionary)
+            
+            if let username = self.user?.username {
+                self.navigationItem.title = username
+            }
+            
+            header.user = self.user
         }
     }
 }

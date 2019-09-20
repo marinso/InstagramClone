@@ -10,6 +10,15 @@ import UIKit
 
 class ProfileHeader: UICollectionViewCell {
     
+    var user: User? {
+        didSet {
+            if let fullname = user?.fullname {
+                nameLabel.text = fullname
+            }
+            print(user?.fullname)
+        }
+    }
+    
     let profileImageView: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .lightGray
@@ -21,7 +30,6 @@ class ProfileHeader: UICollectionViewCell {
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 13)
-        label.text = "Martin Nasierowski"
         return label
     }()
     
@@ -58,7 +66,7 @@ class ProfileHeader: UICollectionViewCell {
     let editProfileButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Edit Profile", for: .normal)
-        button.layer.cornerRadius = 5
+        button.layer.cornerRadius = 3
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.borderWidth = 0.5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
@@ -99,7 +107,7 @@ class ProfileHeader: UICollectionViewCell {
         configureUserStats()
         
         addSubview(editProfileButton)
-        editProfileButton.anchor(top: postsLabel.bottomAnchor, bottom: nil, left: postsLabel.leftAnchor, right: rightAnchor, paddingTop: 12, paddingBottom: 0, paddingLeft: 8, paddingRight: 12, width: 0, height: 30)
+        editProfileButton.anchor(top: postsLabel.bottomAnchor, bottom: nil, left: postsLabel.leftAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 0, paddingLeft: 8, paddingRight: 12, width: 0, height: 30)
         
         configureTabBar()
     }
