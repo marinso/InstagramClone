@@ -177,7 +177,12 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                             print("DEBUG: Failed saving data to firebase", error.localizedDescription)
                             return
                         }
+                        
+                        print("Success")
                     })
+                    
+                    guard (UIApplication.shared.keyWindow?.rootViewController as? MainTabVC) != nil else { return }
+                    self.dismiss(animated: true, completion: nil)
                 })
             })
         }

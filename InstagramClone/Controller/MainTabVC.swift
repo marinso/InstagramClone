@@ -44,6 +44,12 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate{
     func checkIfUserIsSignIn() {
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
+                
+                if #available(iOS 13.0, *) {
+                    self.isModalInPresentation = false
+                } else {
+                    // Fallback on earlier versions
+                }
                 self.present(UINavigationController(rootViewController: LoginVC()), animated: true, completion: nil)
             }
         }

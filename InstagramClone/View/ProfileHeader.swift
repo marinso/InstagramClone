@@ -32,6 +32,7 @@ class ProfileHeader: UICollectionViewCell {
     let nameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = .black
         return label
     }()
     
@@ -42,6 +43,7 @@ class ProfileHeader: UICollectionViewCell {
         let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "posts", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
         label.attributedText = attributedText
+        label.textColor = .black
         return label
     }()
     
@@ -52,6 +54,7 @@ class ProfileHeader: UICollectionViewCell {
         let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
         label.attributedText = attributedText
+        label.textColor = .black
         return label
     }()
     
@@ -62,6 +65,7 @@ class ProfileHeader: UICollectionViewCell {
         let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
         label.attributedText = attributedText
+        label.textColor = .black
         return label
     }()
     
