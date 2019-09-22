@@ -7,11 +7,15 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class ProfileHeader: UICollectionViewCell {
     
+    var delegate: UserProfileHeaderDelegate?
+
     var user: User? {
         didSet {
+            configureEditProfileFollowButton()
             if let fullname = user?.fullname {
                 nameLabel.text = fullname
             }
@@ -69,14 +73,15 @@ class ProfileHeader: UICollectionViewCell {
         return label
     }()
     
-    let editProfileButton: UIButton = {
+    let editProfileFollowButton: UIButton = {
         let button = UIButton(type: .system)
-        button.setTitle("Edit Profile", for: .normal)
+        button.setTitle("Loading...", for: .normal)
         button.layer.cornerRadius = 3
         button.layer.borderColor = UIColor.lightGray.cgColor
         button.layer.borderWidth = 0.5
         button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
         button.setTitleColor(.black, for: .normal)
+//        button.addTarget(self, action: #selector(handleEditProfileFollow), for: .touchUpInside)
         return button
     }()
     
@@ -112,9 +117,9 @@ class ProfileHeader: UICollectionViewCell {
         
         configureUserStats()
         
-        addSubview(editProfileButton)
-        editProfileButton.anchor(top: postsLabel.bottomAnchor, bottom: nil, left: postsLabel.leftAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 0, paddingLeft: 8, paddingRight: 12, width: 0, height: 30)
-        
+        addSubview(editProfileFollowButton)
+        editProfileFollowButton.anchor(top: postsLabel.bottomAnchor, bottom: nil, left: postsLabel.leftAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 0, paddingLeft: 8, paddingRight: 12, width: 0, height: 30)
+        editProfileFollowButton.addTarget(self, action: #selector(handleEditProfileFollow), for: .touchUpInside)
         configureTabBar()
     }
     
@@ -146,5 +151,19 @@ class ProfileHeader: UICollectionViewCell {
         stackView.anchor(top: nil, bottom: bottomAnchor, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 50)
         topDivider.anchor(top: stackView.topAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0.5)
         bottomDivider.anchor(top: stackView.bottomAnchor, bottom: nil, left: leftAnchor, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0.5)
+    }
+    
+    func configureEditProfileFollowButton() {
+        if Auth.auth().currentUser?.uid == user?.uid {
+            editProfileFollowButton.setTitle("Edit Profile", for: .normal)
+        } else {
+            editProfileFollowButton.setTitle("Follow", for: .normal)
+            editProfileFollowButton.setTitleColor(.white, for: .normal)
+            editProfileFollowButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        }
+    }
+    
+    @objc func handleEditProfileFollow() {
+        delegate?.handleEditFollowTapped(for: self)
     }
 }

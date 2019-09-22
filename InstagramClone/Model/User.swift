@@ -5,6 +5,7 @@
 //  Created by Martin Nasierowski on 20/09/2019.
 //  Copyright © 2019 Martin Nasierowski. All rights reserved.
 //
+import Firebase
 
 class User {
     
@@ -12,6 +13,7 @@ class User {
     var fullname: String!
     var profileImgUrl: String!
     var uid: String!
+    var isFollowed = false
     
     init(uid: String, dictionary: Dictionary<String, AnyObject>) {
         
@@ -26,5 +28,25 @@ class User {
         if let profileImgUrl = dictionary["profileImageUrl"] as? String {
             self.profileImgUrl = profileImgUrl
         }
+    }
+    
+    func follow() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = uid else { return }
+        
+        self.isFollowed = true
+        
+        Database.database().reference().child("user-followers").child(currentUid).updateChildValues([uid: 1])
+        Database.database().reference().child("user-following").child(uid).updateChildValues([currentUid: 1])
+    }
+    
+    func unfollow() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = uid else { return }
+               
+        self.isFollowed = false
+        
+        Database.database().reference().child("user-followers").child(currentUid).removeValue()
+        Database.database().reference().child("user-following").child(uid).removeValue()
     }
 }

@@ -45,14 +45,11 @@ extension UIImageView {
     
     func loadImage(with urlString: String) {
         
-        // check if imageCache exist
         if let cachedImage = imageCache[urlString] {
             self.image = cachedImage
             return
         }
-        
-        // if image doesnt exist in cache
-        
+                
         guard let url = URL(string: urlString) else { return }
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in

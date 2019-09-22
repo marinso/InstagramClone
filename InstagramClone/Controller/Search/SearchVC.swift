@@ -45,6 +45,13 @@ class SearchVC: UITableViewController {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let userProfileVC = UserProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        userProfileVC.userFromSearchVC = users[indexPath.row]
+        navigationController?.pushViewController(userProfileVC, animated: true)
+        
+    }
+    
     func configureNavController() {
         navigationItem.title = "Explore"
     }
