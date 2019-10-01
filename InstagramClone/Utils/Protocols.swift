@@ -8,4 +8,7 @@
 
 protocol UserProfileHeaderDelegate {
     func handleEditFollowTapped(for header: ProfileHeader)
+    func handleUserStatus(for header: ProfileHeader)
+    func handleFollowers(for header: ProfileHeader)
+    func handleFollowing(for header: ProfileHeader)
 }

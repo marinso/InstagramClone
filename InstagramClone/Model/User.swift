@@ -49,4 +49,19 @@ class User {
         Database.database().reference().child("user-followers").child(currentUid).removeValue()
         Database.database().reference().child("user-following").child(uid).removeValue()
     }
+    
+    func checkIfUserIsFollowed(completion: @escaping(Bool) -> ()) {
+        
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        Database.database().reference().child("user-followers").child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+            if snapshot.hasChild(self.uid) {
+                self.isFollowed = true
+                completion(true)
+            } else {
+                self.isFollowed = false
+                completion(false)
+            }
+        }
+    }
 }

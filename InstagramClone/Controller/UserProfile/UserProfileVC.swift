@@ -13,7 +13,7 @@ private let reuseIdentifier = "Cell"
 private let headerIdentifier = "ProfileHeader"
 
 class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
-
+   
     var currentUser: User?
     var userFromSearchVC: User?
     
@@ -55,6 +55,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         } else if let userFromSearchVC = userFromSearchVC {
             header.user = userFromSearchVC
         }
+        
         return header
     }
     
@@ -83,6 +84,18 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     }
     
        // MARK: - UserProfileHeader
+    
+    func handleFollowers(for header: ProfileHeader) {
+        let followVC = FollowVC()
+        followVC.navigationItem.title = "Followers"
+        navigationController?.pushViewController(followVC, animated: true)
+    }
+    
+    func handleFollowing(for header: ProfileHeader) {
+         let followVC = FollowVC()
+        followVC.navigationItem.title = "Following"
+         navigationController?.pushViewController(followVC, animated: true)
+    }
         
     func handleEditFollowTapped(for header: ProfileHeader) {
         
@@ -102,6 +115,38 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
            }
         }
     }
+    
+    func handleUserStatus(for header: ProfileHeader) {
+        var numberOfFollowers:Int!
+        var numberOfFollowing:Int!
+        
+        guard let uid = header.user?.uid else { return }
+        
+        Database.database().reference().child("user-followers").child(uid).observe(.value) { (snapshot) in
+            if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
+                numberOfFollowers = snapshot.count
+            } else {
+                numberOfFollowers = 0
+            }
+            
+            let attributedText = NSMutableAttributedString(string: "\(numberOfFollowers!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
+            header.followersLabel.attributedText = attributedText
+        }
+        
+        Database.database().reference().child("user-following").child(uid).observe(.value) { (snapshot) in
+            if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
+                numberOfFollowing = snapshot.count
+            } else {
+                numberOfFollowing = 0
+            }
+            
+            let attributedText = NSMutableAttributedString(string: "\(numberOfFollowing!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
+            header.followingLabel.attributedText = attributedText
+       }
+     }
+       
 }
 
  

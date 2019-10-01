@@ -11,11 +11,15 @@ import FirebaseAuth
 
 class ProfileHeader: UICollectionViewCell {
     
+    // MARK: - PROPERTIES
+    
     var delegate: UserProfileHeaderDelegate?
 
     var user: User? {
         didSet {
             configureEditProfileFollowButton()
+            handleUserStats()
+            
             if let fullname = user?.fullname {
                 nameLabel.text = fullname
             }
@@ -51,25 +55,37 @@ class ProfileHeader: UICollectionViewCell {
         return label
     }()
     
-    let followersLabel: UILabel = {
+    lazy var followersLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+        label.textColor = .black
+        
+        let attributedText = NSMutableAttributedString(string: "\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
         label.attributedText = attributedText
-        label.textColor = .black
+        
+        let followTapp = UITapGestureRecognizer(target: self, action: #selector(handleFollowersTapped))
+        followTapp.numberOfTapsRequired = 1
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(followTapp)
         return label
     }()
     
-    let followingLabel: UILabel = {
+    lazy var followingLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
         label.textAlignment = .center
-        let attributedText = NSMutableAttributedString(string: "5\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+        label.textColor = .black
+        
+        let attributedText = NSMutableAttributedString(string: "\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
         attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
         label.attributedText = attributedText
-        label.textColor = .black
+        
+        let followTapp = UITapGestureRecognizer(target: self, action: #selector(handleFollowingTapped))
+        followTapp.numberOfTapsRequired = 1
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(followTapp)
         return label
     }()
     
@@ -105,6 +121,8 @@ class ProfileHeader: UICollectionViewCell {
         return button
     }()
     
+    // MARK: - Init
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -119,12 +137,22 @@ class ProfileHeader: UICollectionViewCell {
         
         addSubview(editProfileFollowButton)
         editProfileFollowButton.anchor(top: postsLabel.bottomAnchor, bottom: nil, left: postsLabel.leftAnchor, right: rightAnchor, paddingTop: 4, paddingBottom: 0, paddingLeft: 8, paddingRight: 12, width: 0, height: 30)
-        editProfileFollowButton.addTarget(self, action: #selector(handleEditProfileFollow), for: .touchUpInside)
+        editProfileFollowButton.addTarget(self, action: #selector(handleEditFollowTapped), for: .touchUpInside)
         configureTabBar()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Handlers
+    
+    @objc func handleFollowersTapped() {
+        delegate?.handleFollowers(for: self)
+    }
+    
+    @objc func handleFollowingTapped() {
+        delegate?.handleFollowing(for: self)
     }
     
     func configureUserStats() {
@@ -154,16 +182,34 @@ class ProfileHeader: UICollectionViewCell {
     }
     
     func configureEditProfileFollowButton() {
-        if Auth.auth().currentUser?.uid == user?.uid {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        guard let user = self.user else { return }
+        
+        if currentUid == user.uid {
+            
             editProfileFollowButton.setTitle("Edit Profile", for: .normal)
+            
         } else {
-            editProfileFollowButton.setTitle("Follow", for: .normal)
+            
             editProfileFollowButton.setTitleColor(.white, for: .normal)
             editProfileFollowButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        
+            user.checkIfUserIsFollowed(completion: { (followed) in
+                
+                if followed {
+                    self.editProfileFollowButton.setTitle("Unfollow", for: .normal)
+                } else {
+                    self.editProfileFollowButton.setTitle("Follow", for: .normal)
+                }
+            })
         }
     }
     
-    @objc func handleEditProfileFollow() {
+    @objc func handleEditFollowTapped() {
         delegate?.handleEditFollowTapped(for: self)
+    }
+    
+    func handleUserStats() {
+        delegate?.handleUserStatus(for: self)
     }
 }
