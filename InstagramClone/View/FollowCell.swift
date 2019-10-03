@@ -10,6 +10,18 @@ import UIKit
 
 class FollowCell: UITableViewCell {
     
+    var user: User? {
+        didSet {
+            guard let profileImage = user?.profileImgUrl else { return }
+            guard let username = user?.username else { return }
+            guard let name = user?.fullname else { return }
+            
+            profileImageView.loadImage(with: profileImage)
+            usernameLabel.text = username
+            fullNameLabel.text = name
+        }
+    }
+    
     let profileImageView: UIImageView = {
         let iv = UIImageView()
         iv.backgroundColor = .lightGray

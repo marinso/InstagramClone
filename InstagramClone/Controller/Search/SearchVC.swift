@@ -47,9 +47,8 @@ class SearchVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let userProfileVC = UserProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
-        userProfileVC.userFromSearchVC = users[indexPath.row]
+        userProfileVC.user = users[indexPath.row]
         navigationController?.pushViewController(userProfileVC, animated: true)
-        
     }
     
     func configureNavController() {

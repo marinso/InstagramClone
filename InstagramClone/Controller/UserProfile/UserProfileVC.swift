@@ -14,8 +14,7 @@ private let headerIdentifier = "ProfileHeader"
 
 class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
    
-    var currentUser: User?
-    var userFromSearchVC: User?
+    var user: User?
     
     // MARK: - Properties
     override func viewDidLoad() {
@@ -25,7 +24,7 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         self.collectionView!.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         self.collectionView.backgroundColor = .white
         
-        if userFromSearchVC == nil {
+        if user == nil {
             fetchUserData()
         }
     }
@@ -50,11 +49,8 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         
         header.delegate = self
         
-        if let user = currentUser {
-            header.user = user
-        } else if let userFromSearchVC = userFromSearchVC {
-            header.user = userFromSearchVC
-        }
+        header.user = self.user
+        navigationItem.title = user?.username
         
         return header
     }
@@ -74,9 +70,9 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         Database.database().reference().child("users").child(currentUID).observe(.value) { (snapshot) in
             guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
             
-            self.currentUser = User(uid: currentUID, dictionary: dictionary)
+            self.user = User(uid: currentUID, dictionary: dictionary)
             
-            if let username = self.currentUser?.username {
+            if let username = self.user?.username {
                 self.navigationItem.title = username
             }
             self.collectionView.reloadData()
@@ -88,13 +84,17 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     func handleFollowers(for header: ProfileHeader) {
         let followVC = FollowVC()
         followVC.navigationItem.title = "Followers"
+        followVC.viewFollowers = true
+        followVC.uid = user?.uid
         navigationController?.pushViewController(followVC, animated: true)
     }
     
     func handleFollowing(for header: ProfileHeader) {
-         let followVC = FollowVC()
+        let followVC = FollowVC()
         followVC.navigationItem.title = "Following"
-         navigationController?.pushViewController(followVC, animated: true)
+        followVC.viewFollowers = false
+        followVC.uid = user?.uid
+        navigationController?.pushViewController(followVC, animated: true)
     }
         
     func handleEditFollowTapped(for header: ProfileHeader) {
