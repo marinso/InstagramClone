@@ -32,29 +32,33 @@ class User {
     
     func follow() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
         guard let uid = uid else { return }
         
         self.isFollowed = true
         
-        Database.database().reference().child("user-followers").child(currentUid).updateChildValues([uid: 1])
-        Database.database().reference().child("user-following").child(uid).updateChildValues([currentUid: 1])
+        USER_FOLLOWING_REF.child(currentUid).updateChildValues([uid: 1])
+        
+        USER_FOLLOWER_REF.child(uid).updateChildValues([currentUid: 1])
     }
     
     func unfollow() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
-        guard let uid = uid else { return }
-               
-        self.isFollowed = false
         
-        Database.database().reference().child("user-followers").child(currentUid).removeValue()
-        Database.database().reference().child("user-following").child(uid).removeValue()
+        guard let uid = uid else { return }
+        
+        self.isFollowed = false
+
+        USER_FOLLOWING_REF.child(currentUid).child(uid).removeValue()
+        
+        USER_FOLLOWER_REF.child(uid).child(currentUid).removeValue()
     }
     
-    func checkIfUserIsFollowed(completion: @escaping(Bool) -> ()) {
-        
+    func checkIfUserIsFollowed(completion: @escaping(Bool) ->()) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        Database.database().reference().child("user-followers").child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+        USER_FOLLOWING_REF.child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+            
             if snapshot.hasChild(self.uid) {
                 self.isFollowed = true
                 completion(true)

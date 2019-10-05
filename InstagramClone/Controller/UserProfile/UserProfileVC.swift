@@ -67,14 +67,11 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     func fetchUserData() {
         guard let currentUID = Auth.auth().currentUser?.uid else { return }
         
-        Database.database().reference().child("users").child(currentUID).observe(.value) { (snapshot) in
+        Database.database().reference().child("users").child(currentUID).observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
-            
-            self.user = User(uid: currentUID, dictionary: dictionary)
-            
-            if let username = self.user?.username {
-                self.navigationItem.title = username
-            }
+            let uid = snapshot.key
+            self.user = User(uid: uid, dictionary: dictionary)
+            self.navigationItem.title = self.user?.username
             self.collectionView.reloadData()
         }
     }

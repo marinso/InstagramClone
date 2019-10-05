@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import FirebaseAuth
 
 class FollowCell: UITableViewCell {
+    
+    var delegate: FollowVC?
     
     var user: User? {
         didSet {
@@ -19,6 +22,29 @@ class FollowCell: UITableViewCell {
             profileImageView.loadImage(with: profileImage)
             usernameLabel.text = username
             fullNameLabel.text = name
+            
+            print(user?.uid)
+            print( Auth.auth().currentUser?.uid)
+            
+            if user!.uid == Auth.auth().currentUser?.uid {
+                followButton.isHidden = true
+            }
+            
+            user?.checkIfUserIsFollowed(completion: { (followed) in
+                
+                if followed {
+                    self.followButton.setTitle("Unfollow", for: .normal)
+                    self.followButton.setTitleColor(.black, for: .normal)
+                    self.followButton.layer.borderWidth = 0.5
+                    self.followButton.layer.borderColor = UIColor.lightGray.cgColor
+                    self.followButton.backgroundColor = .white
+                } else {
+                    self.followButton.setTitle("Follow", for: .normal)
+                    self.followButton.setTitleColor(.white, for: .normal)
+                    self.followButton.layer.borderWidth = 0
+                    self.followButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+                }
+            })
         }
     }
     
@@ -84,7 +110,7 @@ class FollowCell: UITableViewCell {
     }
     
     @objc func handleFollowTapped() {
-        print("abc")
+        delegate?.handleFollowTapped(for: self)
     }
     
     required init?(coder: NSCoder) {

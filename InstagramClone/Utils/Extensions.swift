@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import FirebaseDatabase
 
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor?, bottom: NSLayoutYAxisAnchor?, left: NSLayoutXAxisAnchor?, right: NSLayoutXAxisAnchor?, paddingTop: CGFloat, paddingBottom: CGFloat, paddingLeft: CGFloat, paddingRight: CGFloat, width: CGFloat, height: CGFloat) {
@@ -69,5 +70,16 @@ extension UIImageView {
             }
         }.resume()
     }
+}
+
+extension Database {
     
+    func fetchUser(with uid: String, completion: @escaping(User) -> ()) {
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+         guard let dictorionary = snapshot.value as? Dictionary<String,AnyObject> else { return }
+           
+         let user = User(uid: uid, dictionary: dictorionary)
+         completion(user)
+       }
+    }
 }
