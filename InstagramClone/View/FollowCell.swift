@@ -23,9 +23,6 @@ class FollowCell: UITableViewCell {
             usernameLabel.text = username
             fullNameLabel.text = name
             
-            print(user?.uid)
-            print( Auth.auth().currentUser?.uid)
-            
             if user!.uid == Auth.auth().currentUser?.uid {
                 followButton.isHidden = true
             }

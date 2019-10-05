@@ -72,10 +72,8 @@ class FollowVC: UITableViewController {
         
         if viewFollowers {
             ref = Database.database().reference().child("user-followers")
-            print("viewfollowers")
         } else {
             ref = Database.database().reference().child("user-following")
-            print("viewfollowing")
         }
         
         ref.child(uid).observeSingleEvent(of: .value) { (snapshot) in
@@ -94,7 +92,6 @@ class FollowVC: UITableViewController {
                 }
             }
         }
-        print(users.count)
     }
     
 }

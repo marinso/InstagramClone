@@ -10,6 +10,9 @@
 		503AFB7C906590EC85A3C909 /* Pods_InstagramClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA248E9B684383BE97B8D473 /* Pods_InstagramClone.framework */; };
 		8310CE422334F7E4007BDCDE /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8310CE412334F7E4007BDCDE /* SearchUserCell.swift */; };
 		8358171D23489659004694CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8358171C23489659004694CA /* Constants.swift */; };
+		8358171F2348D177004694CA /* SelectImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8358171E2348D177004694CA /* SelectImageVC.swift */; };
+		835817212348D201004694CA /* SelectImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817202348D201004694CA /* SelectImageCell.swift */; };
+		835817232348D25D004694CA /* SelectImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817222348D25D004694CA /* SelectImageHeader.swift */; };
 		836B68082337E40C00A1D6AA /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68072337E40C00A1D6AA /* Protocols.swift */; };
 		836B680A2343B98700A1D6AA /* FollowVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68092343B98700A1D6AA /* FollowVC.swift */; };
 		836B680C2343BA1D00A1D6AA /* FollowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B680B2343BA1D00A1D6AA /* FollowCell.swift */; };
@@ -36,6 +39,9 @@
 		5DBC7EBB6516BA03DEA1A857 /* Pods-InstagramClone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramClone.debug.xcconfig"; path = "Target Support Files/Pods-InstagramClone/Pods-InstagramClone.debug.xcconfig"; sourceTree = "<group>"; };
 		8310CE412334F7E4007BDCDE /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
 		8358171C23489659004694CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		8358171E2348D177004694CA /* SelectImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageVC.swift; sourceTree = "<group>"; };
+		835817202348D201004694CA /* SelectImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageCell.swift; sourceTree = "<group>"; };
+		835817222348D25D004694CA /* SelectImageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageHeader.swift; sourceTree = "<group>"; };
 		836B68072337E40C00A1D6AA /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		836B68092343B98700A1D6AA /* FollowVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowVC.swift; sourceTree = "<group>"; };
 		836B680B2343BA1D00A1D6AA /* FollowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCell.swift; sourceTree = "<group>"; };
@@ -109,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				83C85DAB2333920900FDCA16 /* UploadPostVC.swift */,
+				8358171E2348D177004694CA /* SelectImageVC.swift */,
 			);
 			path = UploadPost;
 			sourceTree = "<group>";
@@ -179,6 +186,8 @@
 				8373E3A42333E33F00E00768 /* ProfileHeader.swift */,
 				8310CE412334F7E4007BDCDE /* SearchUserCell.swift */,
 				836B680B2343BA1D00A1D6AA /* FollowCell.swift */,
+				835817202348D201004694CA /* SelectImageCell.swift */,
+				835817222348D25D004694CA /* SelectImageHeader.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -332,9 +341,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8358171F2348D177004694CA /* SelectImageVC.swift in Sources */,
 				83C85DA8233390D600FDCA16 /* FeedVC.swift in Sources */,
+				835817232348D25D004694CA /* SelectImageHeader.swift in Sources */,
 				8358171D23489659004694CA /* Constants.swift in Sources */,
 				83A5A8332334FF05009A6A55 /* SearchVC.swift in Sources */,
+				835817212348D201004694CA /* SelectImageCell.swift in Sources */,
 				836B680A2343B98700A1D6AA /* FollowVC.swift in Sources */,
 				83C85DAE2333923800FDCA16 /* NotificationsVC.swift in Sources */,
 				83C85DAC2333920900FDCA16 /* UploadPostVC.swift in Sources */,
@@ -498,6 +510,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K4UL6WL48A;
 				INFOPLIST_FILE = InstagramClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -517,6 +530,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K4UL6WL48A;
 				INFOPLIST_FILE = InstagramClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
