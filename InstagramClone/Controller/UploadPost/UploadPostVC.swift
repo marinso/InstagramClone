@@ -7,8 +7,10 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseStorage
 
-class UploadPostVC: UIViewController {
+class UploadPostVC: UIViewController, UITextViewDelegate {
     
     // MARK: - Properties
     
@@ -35,12 +37,14 @@ class UploadPostVC: UIViewController {
         button.setTitle("Share", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
+        button.addTarget(self, action: #selector(handleSharePost), for: .touchUpInside)
+        button.isEnabled = false
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        capationTextView.delegate = self
         configureUI()
         loadPhoto()
     }
@@ -63,6 +67,64 @@ class UploadPostVC: UIViewController {
     func loadPhoto() {
         guard let selectedImage = self.selectedImage else { return }
         self.photoImageView.image = selectedImage
+    }
+    
+    // MARK: - Handlers
+    
+    @objc func handleSharePost() {
+        guard
+            let capation = capationTextView.text,
+            let photo = photoImageView.image,
+            let currentUID = Auth.auth().currentUser?.uid else { return }
+        
+        guard let uploatData = photo.jpegData(compressionQuality: 0.5) else { return }
+        
+        let creationDate = Int(NSDate().timeIntervalSince1970)
+        let filename = NSUUID().uuidString
+        let storageRef = Storage.storage().reference().child("post_images").child(filename)
+        
+        storageRef.putData(uploatData, metadata: nil) { (metadata, error ) in
+            if let error = error {
+                print("Failed to upload image: ", error.localizedDescription)
+            }
+            
+            storageRef.downloadURL(completion: { (downloadURL, error) in
+                guard let profileImageUrl = downloadURL?.absoluteString else {
+                    print("DEBUG: Profile image url is nil")
+                    return
+                }
+                
+                let values = [
+                    "capation": capation,
+                    "photo_URL": profileImageUrl,
+                    "likes": 0,
+                    "owner_UID": currentUID,
+                    "creation_date": creationDate
+                    ] as [String: Any]
+                let postID = POST_REF.childByAutoId()
+                
+                postID.updateChildValues(values) { (error, ref) in
+                    if let error = error {
+                        print("Failet to update child values", error.localizedDescription)
+                    }
+                    
+                    self.dismiss(animated: true) {
+                        self.tabBarController?.selectedIndex = 0
+                    }
+                }
+            })
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        guard !textView.text.isEmpty else {
+            shareButton.isEnabled = false
+            shareButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
+            return
+        }
+        
+        shareButton.backgroundColor = UIColor(red: 17/255, green: 153/255, blue: 237/255, alpha: 1)
+        shareButton.isEnabled = true
     }
 
 }
