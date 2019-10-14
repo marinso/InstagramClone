@@ -7,8 +7,27 @@
 //
 
 import UIKit
+import Firebase
 
 class FeedCell: UICollectionViewCell {
+    
+    var post: Post? {
+        
+        didSet {
+            guard let ownerUid = post?.ownerUid else { return }
+            guard let imageUrl = post?.imageUrl else { return }
+            guard let likes = post?.likes else { return }
+            
+            Database.fetchUser(with: ownerUid) { (user) in
+                self.profileImageView.loadImage(with: user.profileImgUrl)
+                self.usernameButton.setTitle(user.username, for: .normal)
+                self.configureCapation(user: user)
+            }
+            
+            postImageView.loadImage(with: imageUrl)
+            likesLabel.text = " \(likes) likes"
+        }
+    }
     
     let profileImageView: CustomImageView = {
            let iv = CustomImageView()
@@ -135,6 +154,16 @@ class FeedCell: UICollectionViewCell {
         
         addSubview(stackView)
         stackView.anchor(top: postImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 120, height: 50)
+    }
+    
+    func configureCapation(user: User) {
+        guard let post = self.post else { return }
+        guard let capation = self.post?.capation else { return }
+        
+        let attributtedText = NSMutableAttributedString(string: user.username, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12)])
+        attributtedText.append(NSAttributedString(string: " \(capation)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]))
+    
+        captionLabel.attributedText = attributtedText
     }
     
     required init?(coder: NSCoder) {

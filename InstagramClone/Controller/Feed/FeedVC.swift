@@ -13,6 +13,8 @@ private let reuseIdentifier = "FeedCell"
 
 class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
+    var posts = [Post]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,6 +24,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         
         collectionView!.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         configureNavigation()
+        fetchPosts()
     }
     
     // MARK: - UICollectionViewDelegateFlowLayout
@@ -39,13 +42,13 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return posts.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FeedCell
+        cell.post = posts[indexPath.row]
         return cell
     }
     
@@ -78,5 +81,27 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         
         self.navigationItem.title = "Instagram"
         
+    }
+    
+    // MARK: - API
+    
+    func fetchPosts() {
+        
+        POST_REF.observe(.childAdded) { (snapshot) in
+            
+            let postId = snapshot.key
+            
+            guard let dictionary = snapshot.value as? Dictionary<String,AnyObject> else { return }
+            
+            let post = Post(uid: postId, dictionary: dictionary)
+            
+            self.posts.append(post)
+            
+            self.posts.sort { (post1, post2) -> Bool in
+                return post1.creationDate > post2.creationDate
+            }
+            
+            self.collectionView.reloadData()
+        }
     }
 }

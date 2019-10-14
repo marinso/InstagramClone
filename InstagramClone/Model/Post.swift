@@ -33,7 +33,7 @@ class Post {
             self.imageUrl = imageUrl
         }
         
-        if let ownerUid = dictionary["owner_uid"] as? String {
+        if let ownerUid = dictionary["owner_UID"] as? String {
             self.ownerUid = ownerUid
         }
         

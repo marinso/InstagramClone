@@ -42,13 +42,12 @@ extension UIView {
 
 
 extension Database {
-    
-    func fetchUser(with uid: String, completion: @escaping(User) -> ()) {
-        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
-         guard let dictorionary = snapshot.value as? Dictionary<String,AnyObject> else { return }
-           
-         let user = User(uid: uid, dictionary: dictorionary)
-         completion(user)
-       }
+    static func fetchUser(with uid: String, completion: @escaping(User) -> ()) {
+        
+        USER_REF.child(uid).observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
+            let user = User(uid: uid, dictionary: dictionary)
+            completion(user)
+        }
     }
 }
