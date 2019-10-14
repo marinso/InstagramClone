@@ -9,35 +9,50 @@
 import UIKit
 import FirebaseAuth
 
-private let reuseIdentifier = "Cell"
+private let reuseIdentifier = "FeedCell"
 
-class FeedVC: UICollectionViewController {
+class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        collectionView.backgroundColor = .white
 
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
-        configureLogOutButton()
+        
+        
+        collectionView!.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        configureNavigation()
     }
     
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionViewDelegateFlowLayout
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = view.frame.width
+        let height = width + 8 + 40 + 8 + 50 + 60
+        return CGSize(width: width, height: height)
+    }
+    
+    
+    // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 0
+        return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 0
+        return 5
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FeedCell
         return cell
     }
-
-    func configureLogOutButton() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+    
+    // MARK: - Handlers
+    
+    @objc func handleShowMessages() {
+        print("show messages")
     }
     
     @objc func handleLogout() {
@@ -54,5 +69,14 @@ class FeedVC: UICollectionViewController {
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         present(alert, animated: true, completion: nil)
+    }
+
+    func configureNavigation() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "send2"), style: .plain, target: self, action: #selector(handleShowMessages))
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Logout", style: .plain, target: self, action: #selector(handleLogout))
+        
+        self.navigationItem.title = "Instagram"
+        
     }
 }

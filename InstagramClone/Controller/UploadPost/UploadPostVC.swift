@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseStorage
+import FirebaseDatabase
 
 class UploadPostVC: UIViewController, UITextViewDelegate {
     
@@ -72,10 +73,11 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
     // MARK: - Handlers
     
     @objc func handleSharePost() {
+
         guard
             let capation = capationTextView.text,
             let photo = photoImageView.image,
-            let currentUID = Auth.auth().currentUser?.uid else { return }
+            let currentUid = Auth.auth().currentUser?.uid else { return }
         
         guard let uploatData = photo.jpegData(compressionQuality: 0.5) else { return }
         
@@ -96,22 +98,25 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
                 
                 let values = [
                     "capation": capation,
-                    "photo_URL": profileImageUrl,
+                    "image_url": profileImageUrl,
                     "likes": 0,
-                    "owner_UID": currentUID,
+                    "owner_UID": currentUid,
                     "creation_date": creationDate
                     ] as [String: Any]
-                let postID = POST_REF.childByAutoId()
                 
-                postID.updateChildValues(values) { (error, ref) in
+                let postId = NSUUID().uuidString
+                
+                POST_REF.child(postId).updateChildValues(values, withCompletionBlock: { (err, ref) in
                     if let error = error {
                         print("Failet to update child values", error.localizedDescription)
                     }
                     
-                    self.dismiss(animated: true) {
+                    USER_POSTS_REF.child(currentUid).updateChildValues([postId: 1])
+                    
+                    self.dismiss(animated: true, completion:  {
                         self.tabBarController?.selectedIndex = 0
-                    }
-                }
+                    })
+                })
             })
         }
     }

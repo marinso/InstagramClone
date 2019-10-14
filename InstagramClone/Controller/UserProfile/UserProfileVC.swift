@@ -9,24 +9,27 @@
 import UIKit
 import Firebase
 
-private let reuseIdentifier = "Cell"
+private let reuseIdentifier = "UserPostCell"
 private let headerIdentifier = "ProfileHeader"
 
 class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, UserProfileHeaderDelegate {
    
     var user: User?
+    var posts = [Post]()
     
     // MARK: - Properties
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        self.collectionView!.register(UserPostCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         self.collectionView!.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         self.collectionView.backgroundColor = .white
         
         if user == nil {
             fetchUserData()
         }
+        
+        fetchPosts()
     }
 
     // MARK: - UICollectionView
@@ -37,12 +40,9 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
+        return posts.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 200)
-    }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerIdentifier, for: indexPath) as! ProfileHeader
@@ -57,16 +57,34 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! UserPostCell
+        cell.photoImageView.loadImage(with: posts[indexPath.row].imageUrl)
         return cell
+    }
+    
+    // MARK: - UICollecitonFlowLayout
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        return CGSize(width: view.frame.width, height: 200)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = (view.frame.width - 2) / 3
+        return CGSize(width: width, height: width)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 1
     }
     
     // MARK: - API
     
     func fetchUserData() {
         guard let currentUID = Auth.auth().currentUser?.uid else { return }
-        
         Database.database().reference().child("users").child(currentUID).observeSingleEvent(of: .value) { (snapshot) in
             guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
             let uid = snapshot.key
@@ -75,6 +93,67 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
             self.collectionView.reloadData()
         }
     }
+    
+    func fetchPosts() {
+        let uid: String!
+        
+        if self.user == nil {
+            uid = Auth.auth().currentUser?.uid
+        } else {
+            uid = self.user!.uid
+        }
+        
+        USER_POSTS_REF.child(uid).observe(.childAdded) { (snapshot) in
+            let postId = snapshot.key
+            
+            POST_REF.child(postId).observeSingleEvent(of: .value) { (snapshot) in
+                guard let dictionary = snapshot.value as? Dictionary<String, AnyObject> else { return }
+                print(dictionary)
+                
+                let post = Post(uid: postId, dictionary: dictionary)
+                
+                self.posts.append(post)
+                
+                self.posts.sort { (post1, post2) -> Bool in
+                    return post1.creationDate > post2.creationDate
+                }
+                
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
+    func handleUserStatus(for header: ProfileHeader) {
+       var numberOfFollowers:Int!
+       var numberOfFollowing:Int!
+       
+       guard let uid = header.user?.uid else { return }
+       
+       Database.database().reference().child("user-followers").child(uid).observe(.value) { (snapshot) in
+           if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
+               numberOfFollowers = snapshot.count
+           } else {
+               numberOfFollowers = 0
+           }
+           
+           let attributedText = NSMutableAttributedString(string: "\(numberOfFollowers!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+           attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
+           header.followersLabel.attributedText = attributedText
+       }
+       
+       Database.database().reference().child("user-following").child(uid).observe(.value) { (snapshot) in
+           if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
+               numberOfFollowing = snapshot.count
+           } else {
+               numberOfFollowing = 0
+           }
+           
+           let attributedText = NSMutableAttributedString(string: "\(numberOfFollowing!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
+           attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
+           header.followingLabel.attributedText = attributedText
+      }
+    }
+      
     
        // MARK: - UserProfileHeader
     
@@ -112,38 +191,6 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
            }
         }
     }
-    
-    func handleUserStatus(for header: ProfileHeader) {
-        var numberOfFollowers:Int!
-        var numberOfFollowing:Int!
-        
-        guard let uid = header.user?.uid else { return }
-        
-        Database.database().reference().child("user-followers").child(uid).observe(.value) { (snapshot) in
-            if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
-                numberOfFollowers = snapshot.count
-            } else {
-                numberOfFollowers = 0
-            }
-            
-            let attributedText = NSMutableAttributedString(string: "\(numberOfFollowers!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
-            attributedText.append(NSAttributedString(string: "followers", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
-            header.followersLabel.attributedText = attributedText
-        }
-        
-        Database.database().reference().child("user-following").child(uid).observe(.value) { (snapshot) in
-            if let snapshot = snapshot.value as? Dictionary<String, AnyObject> {
-                numberOfFollowing = snapshot.count
-            } else {
-                numberOfFollowing = 0
-            }
-            
-            let attributedText = NSMutableAttributedString(string: "\(numberOfFollowing!)\n", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 14)])
-            attributedText.append(NSAttributedString(string: "following", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))
-            header.followingLabel.attributedText = attributedText
-       }
-     }
-       
 }
 
  

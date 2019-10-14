@@ -40,37 +40,6 @@ extension UIView {
     }
 }
 
-var imageCache = [String: UIImage]()
-
-extension UIImageView {
-    
-    func loadImage(with urlString: String) {
-        
-        if let cachedImage = imageCache[urlString] {
-            self.image = cachedImage
-            return
-        }
-                
-        guard let url = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print("Failed to load image with error: ", error.localizedDescription)
-                return
-            }
-            
-            guard let imageData = data else { return }
-            
-            let avatar = UIImage(data: imageData)
-            
-            imageCache[url.absoluteString] = avatar
-            
-            DispatchQueue.main.async {
-                self.image = avatar
-            }
-        }.resume()
-    }
-}
 
 extension Database {
     
