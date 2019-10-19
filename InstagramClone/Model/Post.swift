@@ -11,15 +11,18 @@ import Foundation
 class Post {
     
     var uid: String!
+    var user: User!
     var capation: String!
     var likes: Int!
     var imageUrl: String!
     var ownerUid: String!
     var creationDate: Date!
     
-    init(uid: String, dictionary: Dictionary<String,AnyObject>) {
+    init(uid: String, user: User, dictionary: Dictionary<String,AnyObject>) {
         
         self.uid = uid
+        
+        self.user = user
         
         if let capation = dictionary["capation"] as? String{
             self.capation = capation

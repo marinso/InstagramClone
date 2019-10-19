@@ -8,19 +8,18 @@
 
 import UIKit
 import FirebaseAuth
+import FirebaseDatabase
 
 private let reuseIdentifier = "FeedCell"
 
-class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-
+class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, FeedCellDelegate {
+    
     var posts = [Post]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         collectionView.backgroundColor = .white
-
-        
         
         collectionView!.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         configureNavigation()
@@ -35,6 +34,27 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: height)
     }
     
+    // MARK: - FeedCellDelegate
+    
+    func handleUsernameTapped(for cell: FeedCell) {
+        guard let post = cell.post else { return }
+        let userProfileVC = UserProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+        userProfileVC.user = post.user
+        print(post.user)
+        navigationController?.pushViewController(userProfileVC, animated: true)
+    }
+    
+    func handleLikeTapped(for cell: FeedCell) {
+        print("like")
+    }
+    
+    func handleOptionsTapped(for cell: FeedCell) {
+        print("options")
+    }
+    
+    func handleCommentTapped(for cell: FeedCell) {
+        print("comment")
+    }
     
     // MARK: - UICollectionViewDataSource
 
@@ -48,6 +68,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FeedCell
+        cell.delegate = self
         cell.post = posts[indexPath.row]
         return cell
     }
@@ -91,17 +112,14 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout {
             
             let postId = snapshot.key
             
-            guard let dictionary = snapshot.value as? Dictionary<String,AnyObject> else { return }
-            
-            let post = Post(uid: postId, dictionary: dictionary)
-            
-            self.posts.append(post)
-            
-            self.posts.sort { (post1, post2) -> Bool in
-                return post1.creationDate > post2.creationDate
+            Database.fetchPost(with: postId) { (post) in
+                self.posts.append(post)
+                
+                self.posts.sort { (post1, post2) -> Bool in
+                    return post1.creationDate > post2.creationDate
+                }
+                self.collectionView.reloadData()
             }
-            
-            self.collectionView.reloadData()
         }
     }
 }
