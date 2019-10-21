@@ -40,6 +40,11 @@ class User {
         USER_FOLLOWING_REF.child(currentUid).updateChildValues([uid: 1])
         
         USER_FOLLOWER_REF.child(uid).updateChildValues([currentUid: 1])
+        
+        USER_FEED_REF.child(self.uid).observe(.childAdded) { (snapshot) in
+            let postId = snapshot.key
+            USER_FEED_REF.child(currentUid).updateChildValues([postId: 1])
+        }
     }
     
     func unfollow() {
@@ -52,6 +57,11 @@ class User {
         USER_FOLLOWING_REF.child(currentUid).child(uid).removeValue()
         
         USER_FOLLOWER_REF.child(uid).child(currentUid).removeValue()
+        
+        USER_POSTS_REF.child(self.uid).observe(.childAdded) { (snapshot) in
+            let postId = snapshot.key
+            USER_FEED_REF.child(currentUid).child(postId).removeValue()
+        }
     }
     
     func checkIfUserIsFollowed(completion: @escaping(Bool) ->()) {

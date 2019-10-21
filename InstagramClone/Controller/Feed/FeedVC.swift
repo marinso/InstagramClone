@@ -26,9 +26,15 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         collectionView.backgroundColor = .white
         
         collectionView!.register(FeedCell.self, forCellWithReuseIdentifier: reuseIdentifier)
+        
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
+        
         configureNavigation()
         
         if !viewSinglePost {
+            updateUserFeeds()
             fetchPosts()
         }
     }
@@ -89,6 +95,12 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     // MARK: - Handlers
     
+    @objc func handleRefresh() {
+        posts.removeAll(keepingCapacity: true)
+        fetchPosts()
+        collectionView.reloadData()
+    }
+    
     @objc func handleShowMessages() {
         print("show messages")
     }
@@ -122,9 +134,30 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     // MARK: - API
     
+    func updateUserFeeds() {
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        USER_FOLLOWING_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            let followingUserUid = snapshot.key
+            
+            USER_POSTS_REF.child(followingUserUid).observe(.childAdded) { (snapshot) in
+                let postId = snapshot.key
+                
+                USER_FEED_REF.child(currentUid).updateChildValues([postId: 1])
+            }
+        }
+        
+        USER_POSTS_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+            let postId = snapshot.key
+            USER_FEED_REF.child(currentUid).updateChildValues([postId: 1])
+        }
+    }
+    
     func fetchPosts() {
         
-        POST_REF.observe(.childAdded) { (snapshot) in
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        USER_FEED_REF.child(currentUid).observe(.childAdded) { (snapshot) in
             
             let postId = snapshot.key
             
@@ -134,6 +167,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
                 self.posts.sort { (post1, post2) -> Bool in
                     return post1.creationDate > post2.creationDate
                 }
+                self.collectionView.refreshControl?.endRefreshing()
                 self.collectionView.reloadData()
             }
         }
