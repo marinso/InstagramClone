@@ -58,7 +58,6 @@ extension Database {
             
             Database.fetchUser(with: ownerUid) { (user) in
                 let post = Post(uid: postId, user: user, dictionary: dictionary)
-                print(user.username)
                 completion(post)
             }
         }

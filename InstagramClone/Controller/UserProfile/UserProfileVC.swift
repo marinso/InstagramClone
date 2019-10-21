@@ -38,28 +38,30 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         return 1
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return posts.count
     }
-    
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerIdentifier, for: indexPath) as! ProfileHeader
         
         header.delegate = self
-        
         header.user = self.user
         navigationItem.title = user?.username
-        
         return header
     }
-    
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! UserPostCell
         cell.photoImageView.loadImage(with: posts[indexPath.row].imageUrl)
         return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let feedVC = FeedVC(collectionViewLayout: UICollectionViewFlowLayout())
+        feedVC.viewSinglePost = true
+        feedVC.post = posts[indexPath.row]
+        navigationController?.pushViewController(feedVC, animated: true)
     }
     
     // MARK: - UICollecitonFlowLayout
