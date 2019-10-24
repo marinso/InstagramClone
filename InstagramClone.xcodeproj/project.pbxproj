@@ -18,8 +18,8 @@
 		835817212348D201004694CA /* SelectImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817202348D201004694CA /* SelectImageCell.swift */; };
 		835817232348D25D004694CA /* SelectImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817222348D25D004694CA /* SelectImageHeader.swift */; };
 		836B68082337E40C00A1D6AA /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68072337E40C00A1D6AA /* Protocols.swift */; };
-		836B680A2343B98700A1D6AA /* FollowVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68092343B98700A1D6AA /* FollowVC.swift */; };
-		836B680C2343BA1D00A1D6AA /* FollowCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B680B2343BA1D00A1D6AA /* FollowCell.swift */; };
+		836B680A2343B98700A1D6AA /* FollowLikeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68092343B98700A1D6AA /* FollowLikeVC.swift */; };
+		836B680C2343BA1D00A1D6AA /* FollowLikeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B680B2343BA1D00A1D6AA /* FollowLikeCell.swift */; };
 		8373E3A52333E33F00E00768 /* ProfileHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8373E3A42333E33F00E00768 /* ProfileHeader.swift */; };
 		8373E3A72334DB5200E00768 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8373E3A62334DB5200E00768 /* User.swift */; };
 		838E6914232FBA9500F61D34 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 838E6913232FBA9400F61D34 /* GoogleService-Info.plist */; };
@@ -51,8 +51,8 @@
 		835817202348D201004694CA /* SelectImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageCell.swift; sourceTree = "<group>"; };
 		835817222348D25D004694CA /* SelectImageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageHeader.swift; sourceTree = "<group>"; };
 		836B68072337E40C00A1D6AA /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
-		836B68092343B98700A1D6AA /* FollowVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowVC.swift; sourceTree = "<group>"; };
-		836B680B2343BA1D00A1D6AA /* FollowCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowCell.swift; sourceTree = "<group>"; };
+		836B68092343B98700A1D6AA /* FollowLikeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowLikeVC.swift; sourceTree = "<group>"; };
+		836B680B2343BA1D00A1D6AA /* FollowLikeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowLikeCell.swift; sourceTree = "<group>"; };
 		8373E3A42333E33F00E00768 /* ProfileHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeader.swift; sourceTree = "<group>"; };
 		8373E3A62334DB5200E00768 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		838E6913232FBA9400F61D34 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -140,7 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				83C85DAF2333926800FDCA16 /* UserProfileVC.swift */,
-				836B68092343B98700A1D6AA /* FollowVC.swift */,
+				836B68092343B98700A1D6AA /* FollowLikeVC.swift */,
 			);
 			path = UserProfile;
 			sourceTree = "<group>";
@@ -195,7 +195,7 @@
 			children = (
 				8373E3A42333E33F00E00768 /* ProfileHeader.swift */,
 				8310CE412334F7E4007BDCDE /* SearchUserCell.swift */,
-				836B680B2343BA1D00A1D6AA /* FollowCell.swift */,
+				836B680B2343BA1D00A1D6AA /* FollowLikeCell.swift */,
 				835817202348D201004694CA /* SelectImageCell.swift */,
 				835817222348D25D004694CA /* SelectImageHeader.swift */,
 				3B9073212350E6BF008092F0 /* UserPostCell.swift */,
@@ -361,7 +361,7 @@
 				3B3AC61E23539CE400A30F24 /* FeedCell.swift in Sources */,
 				83A5A8332334FF05009A6A55 /* SearchVC.swift in Sources */,
 				835817212348D201004694CA /* SelectImageCell.swift in Sources */,
-				836B680A2343B98700A1D6AA /* FollowVC.swift in Sources */,
+				836B680A2343B98700A1D6AA /* FollowLikeVC.swift in Sources */,
 				83C85DAE2333923800FDCA16 /* NotificationsVC.swift in Sources */,
 				83C85DAC2333920900FDCA16 /* UploadPostVC.swift in Sources */,
 				83C85DB02333926800FDCA16 /* UserProfileVC.swift in Sources */,
@@ -375,7 +375,7 @@
 				83C85DA62332969B00FDCA16 /* MainTabVC.swift in Sources */,
 				8373E3A72334DB5200E00768 /* User.swift in Sources */,
 				83F4F717232BAFE900D9C6B8 /* AppDelegate.swift in Sources */,
-				836B680C2343BA1D00A1D6AA /* FollowCell.swift in Sources */,
+				836B680C2343BA1D00A1D6AA /* FollowLikeCell.swift in Sources */,
 				8373E3A52333E33F00E00768 /* ProfileHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

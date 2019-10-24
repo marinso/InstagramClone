@@ -11,7 +11,7 @@ import Firebase
 
 class FeedCell: UICollectionViewCell {
     
-    var delegate: FeedCellDelegate!
+    var delegate: FeedCellDelegate?
     
     var post: Post? {
         
@@ -28,15 +28,17 @@ class FeedCell: UICollectionViewCell {
             
             postImageView.loadImage(with: imageUrl)
             likesLabel.text = " \(likes) likes"
+            configureLikeButton()
         }
     }
     
-    let profileImageView: CustomImageView = {
-           let iv = CustomImageView()
-           iv.backgroundColor = .lightGray
-           iv.contentMode = .scaleAspectFill
-           iv.clipsToBounds = true
-           return iv
+   let profileImageView: CustomImageView = {
+       let iv = CustomImageView()
+       iv.backgroundColor = .lightGray
+       iv.contentMode = .scaleAspectFill
+       iv.clipsToBounds = true
+       
+       return iv
     }()
     
     lazy var usernameButton: UIButton = {
@@ -57,11 +59,15 @@ class FeedCell: UICollectionViewCell {
         return button
     }()
     
-    let postImageView: CustomImageView = {
+    lazy var postImageView: CustomImageView = {
        let iv = CustomImageView()
        iv.backgroundColor = .lightGray
        iv.contentMode = .scaleAspectFill
        iv.clipsToBounds = true
+        let likeTap = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTapToLike))
+        likeTap.numberOfTapsRequired = 2
+        iv.isUserInteractionEnabled = true
+        iv.addGestureRecognizer(likeTap)
        return iv
     }()
     
@@ -95,10 +101,14 @@ class FeedCell: UICollectionViewCell {
         return button
     }()
     
-    let likesLabel: UILabel = {
+    lazy var likesLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.text = " 3 likes"
+        let likeTap = UITapGestureRecognizer(target: self, action: #selector(handleShowLikes))
+        likeTap.numberOfTapsRequired = 1
+        label.isUserInteractionEnabled = true
+        label.addGestureRecognizer(likeTap)
         return label
     }()
     
@@ -162,15 +172,6 @@ class FeedCell: UICollectionViewCell {
         stackView.anchor(top: postImageView.bottomAnchor, bottom: nil, left: nil, right: nil, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 120, height: 50)
     }
     
-    func configureCapation(user: User) {
-        guard let post = self.post else { return }
-        guard let capation = self.post?.capation else { return }
-        
-        let attributtedText = NSMutableAttributedString(string: user.username, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12)])
-        attributtedText.append(NSAttributedString(string: " \(capation)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]))
-    
-        captionLabel.attributedText = attributtedText
-    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -178,20 +179,40 @@ class FeedCell: UICollectionViewCell {
     
     // MARK: - Handlers
     
+    @objc func handleDoubleTapToLike() {
+        delegate?.handleLikeTapped(for: self, isDoubleTap: true)
+    }
+    
     @objc func handleUsernameTapped() {
-        delegate.handleUsernameTapped(for: self)
+        delegate?.handleUsernameTapped(for: self)
     }
     
     @objc func handleOptionsTapped() {
-        delegate.handleOptionsTapped(for: self)
+        delegate?.handleOptionsTapped(for: self)
     }
     
     @objc func handleLikeTapped() {
-        delegate.handleLikeTapped(for: self)
+        delegate?.handleLikeTapped(for: self, isDoubleTap: false)
     }
     
     @objc func handleCommentTapped() {
-        delegate.handleCommentTapped(for: self)
+        delegate?.handleCommentTapped(for: self)
     }
     
+    @objc func handleShowLikes() {
+        delegate?.handleShowLikes(for: self)
+    }
+    
+    private func configureLikeButton() {
+        delegate?.handleConfigureLikesButton(for: self)
+    }
+    
+    private func configureCapation(user: User) {
+        guard let capation = self.post?.capation else { return }
+        
+        let attributtedText = NSMutableAttributedString(string: user.username, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12)])
+        attributtedText.append(NSAttributedString(string: " \(capation)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]))
+    
+        captionLabel.attributedText = attributtedText
+    }
 }

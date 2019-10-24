@@ -154,17 +154,17 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
        // MARK: - UserProfileHeader
     
     func handleFollowers(for header: ProfileHeader) {
-        let followVC = FollowVC()
+        let followVC = FollowLikeVC()
         followVC.navigationItem.title = "Followers"
-        followVC.viewFollowers = true
+        followVC.viewingMode = .Followers
         followVC.uid = user?.uid
         navigationController?.pushViewController(followVC, animated: true)
     }
     
     func handleFollowing(for header: ProfileHeader) {
-        let followVC = FollowVC()
+        let followVC = FollowLikeVC()
         followVC.navigationItem.title = "Following"
-        followVC.viewFollowers = false
+        followVC.viewingMode = .Following
         followVC.uid = user?.uid
         navigationController?.pushViewController(followVC, animated: true)
     }

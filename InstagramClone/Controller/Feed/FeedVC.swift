@@ -41,13 +41,46 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     // MARK: - UICollectionViewDelegateFlowLayout
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    internal func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = view.frame.width
         let height = width + 8 + 40 + 8 + 50 + 60
         return CGSize(width: width, height: height)
     }
     
     // MARK: - FeedCellDelegate
+    
+    func handleConfigureLikesButton(for cell: FeedCell) {
+        guard let post = cell.post else { return }
+        guard let postId = post.uid else { return }
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        
+        USER_LIKES_REF.child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
+
+            if snapshot.hasChild(postId) {
+                post.didLike = true
+                cell.likeButton.setImage(#imageLiteral(resourceName: "like_selected"), for: .normal)
+            }
+        }
+    }
+    
+    func handleLikeTapped(for cell: FeedCell, isDoubleTap: Bool) {
+        guard let post = cell.post else { return }
+        
+        if post.didLike {
+            
+            if !isDoubleTap {
+                post.adjustLikes(addLike: false) { (likes) in
+                    cell.likesLabel.text = "\(likes) likes"
+                    cell.likeButton.setImage(#imageLiteral(resourceName: "like_unselected"), for: .normal)
+                }
+            }
+        } else {
+            post.adjustLikes(addLike: true) { (likes) in
+                cell.likeButton.setImage(#imageLiteral(resourceName: "like_selected"), for: .normal)
+                cell.likesLabel.text = "\(likes) likes"
+            }
+        }
+    }
     
     func handleUsernameTapped(for cell: FeedCell) {
         guard let post = cell.post else { return }
@@ -56,25 +89,21 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         navigationController?.pushViewController(userProfileVC, animated: true)
     }
     
-    func handleLikeTapped(for cell: FeedCell) {
-        print("like")
-    }
-    
-    func handleOptionsTapped(for cell: FeedCell) {
+    internal func handleOptionsTapped(for cell: FeedCell) {
         print("options")
     }
     
-    func handleCommentTapped(for cell: FeedCell) {
+    internal func handleCommentTapped(for cell: FeedCell) {
         print("comment")
     }
     
     // MARK: - UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+    internal override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if viewSinglePost {
             return 1
         } else {
@@ -82,7 +111,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         }
     }
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FeedCell
         cell.delegate = self
         if viewSinglePost {
@@ -94,6 +123,14 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     // MARK: - Handlers
+    
+    func handleShowLikes(for cell: FeedCell) {
+        guard let postId = cell.post?.uid else { return }
+        let followLikeVC = FollowLikeVC()
+        followLikeVC.viewingMode = .Likes
+        followLikeVC.postId = postId
+        navigationController?.pushViewController(followLikeVC, animated: true)
+    }
     
     @objc func handleRefresh() {
         posts.removeAll(keepingCapacity: true)
@@ -121,7 +158,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         present(alert, animated: true, completion: nil)
     }
 
-    func configureNavigation() {
+    private func configureNavigation() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "send2"), style: .plain, target: self, action: #selector(handleShowMessages))
         
         if !viewSinglePost {
@@ -134,7 +171,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     // MARK: - API
     
-    func updateUserFeeds() {
+    private func updateUserFeeds() {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
         USER_FOLLOWING_REF.child(currentUid).observe(.childAdded) { (snapshot) in
@@ -153,7 +190,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         }
     }
     
-    func fetchPosts() {
+    private func fetchPosts() {
         
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
@@ -173,3 +210,4 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         }
     }
 }
+

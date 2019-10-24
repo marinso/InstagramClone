@@ -9,9 +9,9 @@
 import UIKit
 import FirebaseAuth
 
-class FollowCell: UITableViewCell {
+class FollowLikeCell: UITableViewCell {
     
-    var delegate: FollowVC?
+    var delegate: FollowLikeVC?
     
     var user: User? {
         didSet {
