@@ -94,7 +94,8 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     internal func handleCommentTapped(for cell: FeedCell) {
-        print("comment")
+        let commentVC = CommentVC(collectionViewLayout: UICollectionViewFlowLayout())
+        navigationController?.pushViewController(commentVC, animated: true)
     }
     
     // MARK: - UICollectionViewDataSource
