@@ -41,6 +41,7 @@ class CommentCell: UICollectionViewCell {
         let tv = UITextView()
         tv.font = UIFont.systemFont(ofSize: 12)
         tv.isScrollEnabled = false
+        tv.isUserInteractionEnabled = false
         return tv
     }()
     

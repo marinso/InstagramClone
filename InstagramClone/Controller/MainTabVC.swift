@@ -13,7 +13,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.delegate = self
         configureViewControllers()
         checkIfUserIsSignIn()
@@ -56,16 +56,10 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate{
     func checkIfUserIsSignIn() {
         if Auth.auth().currentUser == nil {
             DispatchQueue.main.async {
-                
-                if #available(iOS 13.0, *) {
-                    self.isModalInPresentation = false
-                } else {
-                    // Fallback on earlier versions
-                }
-                self.present(UINavigationController(rootViewController: LoginVC()), animated: true, completion: nil)
+                let loginVC = UINavigationController(rootViewController: LoginVC())
+                loginVC.modalPresentationStyle = .fullScreen
+                self.present(loginVC, animated: true)
             }
         }
-        
-        print("user is sign in")
     }
 }

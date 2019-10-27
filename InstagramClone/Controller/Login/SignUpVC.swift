@@ -83,7 +83,7 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.hideKeyboardWhenTappedAround() 
         view.backgroundColor = .white
         view.addSubview(addPhotoButton)
         
