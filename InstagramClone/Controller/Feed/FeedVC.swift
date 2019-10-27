@@ -94,7 +94,9 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     internal func handleCommentTapped(for cell: FeedCell) {
+        guard let postId = cell.post?.uid else { return }
         let commentVC = CommentVC(collectionViewLayout: UICollectionViewFlowLayout())
+        commentVC.postId = postId
         navigationController?.pushViewController(commentVC, animated: true)
     }
     

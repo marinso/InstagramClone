@@ -31,6 +31,7 @@
 		83C85DB02333926800FDCA16 /* UserProfileVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83C85DAF2333926800FDCA16 /* UserProfileVC.swift */; };
 		83D7FDBE2364637400D0861E /* CommentVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D7FDBD2364637400D0861E /* CommentVC.swift */; };
 		83D7FDC02364655100D0861E /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D7FDBF2364655100D0861E /* CommentCell.swift */; };
+		83D7FDC22364B27900D0861E /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D7FDC12364B27900D0861E /* Comment.swift */; };
 		83F4F717232BAFE900D9C6B8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83F4F716232BAFE900D9C6B8 /* AppDelegate.swift */; };
 		83F4F71C232BAFE900D9C6B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 83F4F71A232BAFE900D9C6B8 /* Main.storyboard */; };
 		83F4F71E232BAFEA00D9C6B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83F4F71D232BAFEA00D9C6B8 /* Assets.xcassets */; };
@@ -66,6 +67,7 @@
 		83C85DAF2333926800FDCA16 /* UserProfileVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileVC.swift; sourceTree = "<group>"; };
 		83D7FDBD2364637400D0861E /* CommentVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentVC.swift; sourceTree = "<group>"; };
 		83D7FDBF2364655100D0861E /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
+		83D7FDC12364B27900D0861E /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		83F4F713232BAFE900D9C6B8 /* InstagramClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstagramClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83F4F716232BAFE900D9C6B8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		83F4F71B232BAFE900D9C6B8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -191,6 +193,7 @@
 				8373E3A62334DB5200E00768 /* User.swift */,
 				3B7B98C8234E1FC900A3A495 /* Post.swift */,
 				3B9073232352143D008092F0 /* CustomImageView.swift */,
+				83D7FDC12364B27900D0861E /* Comment.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				8373E3A72334DB5200E00768 /* User.swift in Sources */,
 				83F4F717232BAFE900D9C6B8 /* AppDelegate.swift in Sources */,
 				836B680C2343BA1D00A1D6AA /* FollowLikeCell.swift in Sources */,
+				83D7FDC22364B27900D0861E /* Comment.swift in Sources */,
 				8373E3A52333E33F00E00768 /* ProfileHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
