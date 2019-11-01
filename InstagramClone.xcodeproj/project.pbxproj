@@ -13,6 +13,8 @@
 		3B9073242352143D008092F0 /* CustomImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9073232352143D008092F0 /* CustomImageView.swift */; };
 		503AFB7C906590EC85A3C909 /* Pods_InstagramClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA248E9B684383BE97B8D473 /* Pods_InstagramClone.framework */; };
 		8310CE422334F7E4007BDCDE /* SearchUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8310CE412334F7E4007BDCDE /* SearchUserCell.swift */; };
+		832BBBAF2368C0CF0057AFEA /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 832BBBAE2368C0CF0057AFEA /* Notification.swift */; };
+		833CC3922367750400A6AB34 /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 833CC3912367750400A6AB34 /* NotificationCell.swift */; };
 		8358171D23489659004694CA /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8358171C23489659004694CA /* Constants.swift */; };
 		8358171F2348D177004694CA /* SelectImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8358171E2348D177004694CA /* SelectImageVC.swift */; };
 		835817212348D201004694CA /* SelectImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817202348D201004694CA /* SelectImageCell.swift */; };
@@ -49,6 +51,8 @@
 		3B9073232352143D008092F0 /* CustomImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImageView.swift; sourceTree = "<group>"; };
 		5DBC7EBB6516BA03DEA1A857 /* Pods-InstagramClone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstagramClone.debug.xcconfig"; path = "Target Support Files/Pods-InstagramClone/Pods-InstagramClone.debug.xcconfig"; sourceTree = "<group>"; };
 		8310CE412334F7E4007BDCDE /* SearchUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserCell.swift; sourceTree = "<group>"; };
+		832BBBAE2368C0CF0057AFEA /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		833CC3912367750400A6AB34 /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		8358171C23489659004694CA /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		8358171E2348D177004694CA /* SelectImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageVC.swift; sourceTree = "<group>"; };
 		835817202348D201004694CA /* SelectImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageCell.swift; sourceTree = "<group>"; };
@@ -194,6 +198,7 @@
 				3B7B98C8234E1FC900A3A495 /* Post.swift */,
 				3B9073232352143D008092F0 /* CustomImageView.swift */,
 				83D7FDC12364B27900D0861E /* Comment.swift */,
+				832BBBAE2368C0CF0057AFEA /* Notification.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -209,6 +214,7 @@
 				3B9073212350E6BF008092F0 /* UserPostCell.swift */,
 				3B3AC61D23539CE400A30F24 /* FeedCell.swift */,
 				83D7FDBF2364655100D0861E /* CommentCell.swift */,
+				833CC3912367750400A6AB34 /* NotificationCell.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -382,6 +388,8 @@
 				3B7B98C9234E1FC900A3A495 /* Post.swift in Sources */,
 				83F4F72D232BB05500D9C6B8 /* LoginVC.swift in Sources */,
 				83F4F730232BB68F00D9C6B8 /* Extensions.swift in Sources */,
+				833CC3922367750400A6AB34 /* NotificationCell.swift in Sources */,
+				832BBBAF2368C0CF0057AFEA /* Notification.swift in Sources */,
 				836B68082337E40C00A1D6AA /* Protocols.swift in Sources */,
 				83C85DA62332969B00FDCA16 /* MainTabVC.swift in Sources */,
 				8373E3A72334DB5200E00768 /* User.swift in Sources */,

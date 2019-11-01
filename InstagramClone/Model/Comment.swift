@@ -28,4 +28,6 @@ class Comment {
             self.creationDate = Date(timeIntervalSince1970: creationDate)
         }
     }
+    
+    
 }

@@ -65,9 +65,8 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     func handleLikeTapped(for cell: FeedCell, isDoubleTap: Bool) {
         guard let post = cell.post else { return }
-        
+                
         if post.didLike {
-            
             if !isDoubleTap {
                 post.adjustLikes(addLike: false) { (likes) in
                     cell.likesLabel.text = "\(likes) likes"
@@ -94,9 +93,9 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     internal func handleCommentTapped(for cell: FeedCell) {
-        guard let postId = cell.post?.uid else { return }
+        guard let post = cell.post else { return }
         let commentVC = CommentVC(collectionViewLayout: UICollectionViewFlowLayout())
-        commentVC.postId = postId
+        commentVC.post = post
         navigationController?.pushViewController(commentVC, animated: true)
     }
     

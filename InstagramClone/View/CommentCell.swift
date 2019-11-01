@@ -17,12 +17,13 @@ class CommentCell: UICollectionViewCell {
             guard let profileImageUrl = user.profileImgUrl else { return }
             guard let username = user.username else { return }
             guard let commentText = comment?.commentText else { return }
+            guard let commentDate = getCommentDate() else { return }
             
             let attributtedText = NSMutableAttributedString(string: username, attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
                
             attributtedText.append(NSAttributedString(string: " \(commentText)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)]))
             
-            attributtedText.append(NSAttributedString(string: " 2 days ago", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))            
+            attributtedText.append(NSAttributedString(string: " \(commentDate)", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.lightGray]))            
             commentTextView.attributedText = attributtedText
             
             profileImageView.loadImage(with: profileImageUrl)
@@ -70,5 +71,15 @@ class CommentCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func getCommentDate() -> String? {
+        guard let commentDate = comment?.creationDate else { return nil }
+        let dateFormatter = DateComponentsFormatter()
+        dateFormatter.allowedUnits = [.second, .minute, .hour, .day, .weekOfMonth ]
+        dateFormatter.maximumUnitCount = 1
+        dateFormatter.unitsStyle = .abbreviated
+        let now = Date()
+        return dateFormatter.string(from: commentDate, to: now)
     }
 }

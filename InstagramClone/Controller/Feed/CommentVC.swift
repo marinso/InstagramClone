@@ -15,7 +15,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     // MARK: - Properties
     
-    var postId: String?
+    var post: Post?
     var comments = [Comment]()
     
     
@@ -126,7 +126,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     @objc func handleUploadComment() {
         
-        guard let postId = postId else { return }
+        guard let postId = post?.uid else { return }
         guard let commentText = commentTextField.text else { return }
         guard let userId = Auth.auth().currentUser?.uid else { return }
         let creationDate = Int(NSDate().timeIntervalSince1970)
@@ -136,6 +136,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
                       "userId": userId] as [String : Any]
         
         COMMENT_REF.child(postId).childByAutoId().updateChildValues(values) { (ref, err) in
+            self.uploadCommentNotificationToServer()
             self.commentTextField.text = nil
         }
     }
@@ -143,7 +144,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     func fetchComments() {
         
-        guard let postId = postId else { return }
+        guard let postId = self.post?.uid else { return }
         COMMENT_REF.child(postId).observe(.childAdded) { (snapshot) in
             
             guard let dictionary = snapshot.value as? Dictionary <String, AnyObject> else { return }
@@ -154,8 +155,24 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
               self.comments.append(comment)
               self.collectionView.reloadData()
             }
-            
-          
+        }
+    }
+    
+    func uploadCommentNotificationToServer() {
+        
+        guard let currentUid = Auth.auth().currentUser?.uid else { return }
+        guard let postId = self.post?.uid else { return }
+        guard let userId = self.post?.ownerUid else { return }
+        let creationDate = Int(NSDate().timeIntervalSince1970)
+        
+         let values = ["checked": 0,
+                                 "creationDate": creationDate,
+                                 "userId": currentUid,
+                                 "type": COMMENT_INT_VALUE,
+                                 "postId": postId ] as [String : Any]
+        
+        if userId != currentUid {
+            NOTIFICATIONS_REF.child(userId).childByAutoId().updateChildValues(values)
         }
     }
 }

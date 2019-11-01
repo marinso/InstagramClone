@@ -9,6 +9,24 @@
 import UIKit
 import FirebaseDatabase
 
+
+extension UIButton {
+    func confiure(didFollow:Bool) {
+        if didFollow {
+            self.setTitle("Unfollow", for: .normal)
+            self.setTitleColor(.black, for: .normal)
+            self.layer.borderWidth = 0.5
+            self.layer.borderColor = UIColor.lightGray.cgColor
+            self.backgroundColor = .white
+        } else {
+            self.setTitle("Follow", for: .normal)
+            self.setTitleColor(.white, for: .normal)
+            self.layer.borderWidth = 0
+            self.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
+        }
+    }
+}
+
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor?, bottom: NSLayoutYAxisAnchor?, left: NSLayoutXAxisAnchor?, right: NSLayoutXAxisAnchor?, paddingTop: CGFloat, paddingBottom: CGFloat, paddingLeft: CGFloat, paddingRight: CGFloat, width: CGFloat, height: CGFloat) {
         
