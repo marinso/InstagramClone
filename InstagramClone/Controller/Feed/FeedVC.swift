@@ -141,7 +141,8 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     @objc func handleShowMessages() {
-        print("show messages")
+        let messagesController = MessagesController()
+        navigationController?.pushViewController(messagesController, animated: true)
     }
     
     @objc func handleLogout() {

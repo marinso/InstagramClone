@@ -111,13 +111,15 @@ class NotificationCell: UITableViewCell {
     private func configureNotificationType() {
                 
         guard let user = notification?.user else { return }
+        addSubview(notificationLabel)
 
         if notification?.notificationType != .Follow {
             addSubview(postImageView)
             postImageView.anchor(top: nil, bottom: nil, left: nil, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8, width: 40, height: 40)
             postImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-            
+            notificationLabel.anchor(top: nil, bottom: nil, left: profileImageView.rightAnchor, right: postImageView.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8, width: 0, height: 0)
         } else {
+            
             addSubview(followButton)
             followButton.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
             followButton.anchor(top: nil, bottom: nil, left: nil, right: rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 12, width: 90, height: 30)
@@ -138,10 +140,11 @@ class NotificationCell: UITableViewCell {
                     self.followButton.backgroundColor = UIColor(red: 17/255, green: 154/255, blue: 237/255, alpha: 1)
                 }
             })
+            
+            notificationLabel.anchor(top: nil, bottom: nil, left: profileImageView.rightAnchor, right: followButton.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8, width: 0, height: 0)
         }
         
-        addSubview(notificationLabel)
-        notificationLabel.anchor(top: nil, bottom: nil, left: profileImageView.rightAnchor, right: nil, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 8, width: 0, height: 0)
+       
         notificationLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     

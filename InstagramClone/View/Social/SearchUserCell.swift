@@ -17,8 +17,8 @@ class SearchUserCell: UITableViewCell {
             guard let name = user?.fullname else { return }
             
             profileImageView.loadImage(with: profileImage)
-            usernameLabel.text = username
-            fullNameLabel.text = name
+            textLabel!.text = username
+            detailTextLabel!.text = name
         }
     }
     
@@ -30,44 +30,27 @@ class SearchUserCell: UITableViewCell {
         return iv
     }()
     
-    let usernameLabel: UILabel = {
-        var label = UILabel()
-        label.textColor = UIColor.black
-        label.font = UIFont.boldSystemFont(ofSize: 12)
-        label.text = "Username"
-        label.textAlignment = .left
-        return label
-    }()
-    
-    let fullNameLabel: UILabel = {
-        var label = UILabel()
-        label.textColor = UIColor.lightGray
-        label.font = UIFont.systemFont(ofSize: 12)
-        label.text = "Full name"
-        label.textAlignment = .left
-        return label
-    }()
-
-
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
 
         addSubview(profileImageView)
         profileImageView.anchor(top: nil, bottom: nil, left: leftAnchor, right: nil, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 48, height: 48)
         profileImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         profileImageView.layer.cornerRadius = 48 / 2
         profileImageView.clipsToBounds = true
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         
-        addSubview(usernameLabel)
-        usernameLabel.translatesAutoresizingMaskIntoConstraints = false
-        usernameLabel.centerXAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 48).isActive = true
-        usernameLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: -10).isActive = true
+        textLabel!.frame = CGRect(x: 68, y: textLabel!.frame.origin.y - 2, width: (textLabel?.frame.width)!, height: (textLabel?.frame.height)!)
         
-        addSubview(fullNameLabel)
-        fullNameLabel.translatesAutoresizingMaskIntoConstraints = false
-        fullNameLabel.centerXAnchor.constraint(equalTo: profileImageView.rightAnchor, constant: 46 ).isActive = true
-        fullNameLabel.centerYAnchor.constraint(equalTo: centerYAnchor, constant: 10).isActive = true
+        detailTextLabel!.frame = CGRect(x: 68, y: detailTextLabel!.frame.origin.y - 2, width: self.frame.width - 108, height: (detailTextLabel?.frame.height)!)
         
+        textLabel!.font = UIFont.systemFont(ofSize: 12)
+        detailTextLabel!.font = UIFont.systemFont(ofSize: 12)
+        
+        detailTextLabel?.textColor = .lightGray
     }
     
     required init?(coder aDecoder: NSCoder) {

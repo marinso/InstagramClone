@@ -66,7 +66,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
             present(nav, animated: true)
             return false
         } else if index == 3 {
-            setNotificationToChecked()
+//            setNotificationToChecked()
             dot.isHidden = true
             return true
         }
