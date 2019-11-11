@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import ActiveLabel
 
 class FeedCell: UICollectionViewCell {
     
@@ -112,11 +113,9 @@ class FeedCell: UICollectionViewCell {
         return label
     }()
     
-    let captionLabel: UILabel = {
-        let label = UILabel()
-        let attributtedText = NSMutableAttributedString(string: "Username", attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12)])
-        attributtedText.append(NSAttributedString(string: " some test capation for now", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]))
-        label.attributedText = attributtedText
+    let captionLabel: ActiveLabel = {
+        let label = ActiveLabel()
+        label.numberOfLines = 0
         return label
     }()
     
@@ -209,10 +208,31 @@ class FeedCell: UICollectionViewCell {
     
     private func configureCapation(user: User) {
         guard let capation = self.post?.capation else { return }
+        guard let username = post?.user.username else { return }
         
-        let attributtedText = NSMutableAttributedString(string: user.username, attributes: [NSAttributedString.Key.font : UIFont.boldSystemFont(ofSize: 12)])
-        attributtedText.append(NSAttributedString(string: " \(capation)", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12)]))
-    
-        captionLabel.attributedText = attributtedText
+        let customType = ActiveType.custom(pattern: "^\(username)\\b")
+        
+        captionLabel.enabledTypes = [.mention, .hashtag, .url, customType]
+        
+        captionLabel.configureLinkAttribute = { (type, attributes, isSelected) in
+            var atts = attributes
+            
+            switch type {
+            case .custom:
+                atts[NSAttributedString.Key.font] = UIFont.boldSystemFont(ofSize: 12)
+            default: ()
+            }
+            return atts
+        }
+        
+        captionLabel.customize { (label) in
+            label.text = "\(username) \(capation)"
+            label.customColor[customType] = .black
+            label.textColor = .black
+            label.font = UIFont.systemFont(ofSize: 12)
+            captionLabel.numberOfLines = 2
+        }
+        
+        postTimeLabel.text = "2 Dats AGO"
     }
 }

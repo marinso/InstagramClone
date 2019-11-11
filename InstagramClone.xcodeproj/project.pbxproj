@@ -22,6 +22,8 @@
 		8358171F2348D177004694CA /* SelectImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8358171E2348D177004694CA /* SelectImageVC.swift */; };
 		835817212348D201004694CA /* SelectImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817202348D201004694CA /* SelectImageCell.swift */; };
 		835817232348D25D004694CA /* SelectImageHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 835817222348D25D004694CA /* SelectImageHeader.swift */; };
+		836676AC237611AF0055AA48 /* HashtagController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836676AB237611AF0055AA48 /* HashtagController.swift */; };
+		836676AE2376136E0055AA48 /* HashtagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836676AD2376136E0055AA48 /* HashtagCell.swift */; };
 		836B68082337E40C00A1D6AA /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68072337E40C00A1D6AA /* Protocols.swift */; };
 		836B680A2343B98700A1D6AA /* FollowLikeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B68092343B98700A1D6AA /* FollowLikeVC.swift */; };
 		836B680C2343BA1D00A1D6AA /* FollowLikeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836B680B2343BA1D00A1D6AA /* FollowLikeCell.swift */; };
@@ -68,6 +70,8 @@
 		8358171E2348D177004694CA /* SelectImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageVC.swift; sourceTree = "<group>"; };
 		835817202348D201004694CA /* SelectImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageCell.swift; sourceTree = "<group>"; };
 		835817222348D25D004694CA /* SelectImageHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectImageHeader.swift; sourceTree = "<group>"; };
+		836676AB237611AF0055AA48 /* HashtagController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagController.swift; sourceTree = "<group>"; };
+		836676AD2376136E0055AA48 /* HashtagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashtagCell.swift; sourceTree = "<group>"; };
 		836B68072337E40C00A1D6AA /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		836B68092343B98700A1D6AA /* FollowLikeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowLikeVC.swift; sourceTree = "<group>"; };
 		836B680B2343BA1D00A1D6AA /* FollowLikeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowLikeCell.swift; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 				83D7FDBF2364655100D0861E /* CommentCell.swift */,
 				833CC3912367750400A6AB34 /* NotificationCell.swift */,
 				83C4B53D236F8BB600623051 /* SearchPostCell.swift */,
+				836676AD2376136E0055AA48 /* HashtagCell.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -151,6 +156,7 @@
 			children = (
 				83C85DA7233390D600FDCA16 /* FeedVC.swift */,
 				83D7FDBD2364637400D0861E /* CommentVC.swift */,
+				836676AB237611AF0055AA48 /* HashtagController.swift */,
 			);
 			path = Feed;
 			sourceTree = "<group>";
@@ -433,6 +439,7 @@
 				836B680A2343B98700A1D6AA /* FollowLikeVC.swift in Sources */,
 				83C85DAE2333923800FDCA16 /* NotificationsVC.swift in Sources */,
 				83C85DAC2333920900FDCA16 /* UploadPostVC.swift in Sources */,
+				836676AE2376136E0055AA48 /* HashtagCell.swift in Sources */,
 				83C85DB02333926800FDCA16 /* UserProfileVC.swift in Sources */,
 				83D7FDC02364655100D0861E /* CommentCell.swift in Sources */,
 				3B9073222350E6BF008092F0 /* UserPostCell.swift in Sources */,
@@ -452,6 +459,7 @@
 				836B680C2343BA1D00A1D6AA /* FollowLikeCell.swift in Sources */,
 				83D7FDC22364B27900D0861E /* Comment.swift in Sources */,
 				8373E3A52333E33F00E00768 /* ProfileHeader.swift in Sources */,
+				836676AC237611AF0055AA48 /* HashtagController.swift in Sources */,
 				83100786237206C9000EE92A /* ChatController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

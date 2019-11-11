@@ -15,18 +15,18 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     // MARK: - Properties
     
-    var post: Post?
-    var comments = [Comment]()
+    open var post: Post?
+    private var comments = [Comment]()
     
     
-    let commentTextField: UITextField = {
+    private let commentTextField: UITextField = {
         let tf = UITextField()
         tf.placeholder = "Enter comment.."
         tf.font = UIFont.systemFont(ofSize: 14)
         return tf
     }()
     
-    lazy var containerView: UIView = {
+    private lazy var containerView: UIView = {
         let containerView = UIView()
         containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
         
@@ -43,7 +43,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         return containerView
     }()
     
-    let postButton: UIButton = {
+    private let postButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Post", for: .normal)
         button.setTitleColor(.black, for: .normal)
@@ -52,7 +52,7 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         return button
     }()
     
-    let separatorView:UIView = {
+    private let separatorView:UIView = {
        let separator = UIView()
         separator.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         return separator
@@ -119,6 +119,10 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! CommentCell
         cell.comment = comments[indexPath.item]
+        
+        handleHashtagTapped(forCell: cell)
+        handleMentionTapped(forCell: cell)
+        
         return cell
     }
     
@@ -137,12 +141,30 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         COMMENT_REF.child(postId).childByAutoId().updateChildValues(values) { (ref, err) in
             self.uploadCommentNotificationToServer()
+            self.uploadMentionNotification(for: postId, with: commentText, isForComment: true)
+
             self.commentTextField.text = nil
         }
     }
     
+    private func handleMentionTapped(forCell cell: CommentCell) {
+        cell.commentLabel.handleMentionTap { (username) in
+            self.getMentionedUser(withUsername: username)
+        }
+    }
     
-    func fetchComments() {
+    private func handleHashtagTapped(forCell cell: CommentCell) {
+        cell.commentLabel.handleHashtagTap { (hashtag) in
+            let hashtagController = HashtagController(collectionViewLayout: UICollectionViewFlowLayout())
+            hashtagController.hashtag = hashtag
+            self.navigationController?.pushViewController(hashtagController, animated: true)
+        }
+    }
+    
+    // MARK: - API
+    
+    
+    private func fetchComments() {
         
         guard let postId = self.post?.uid else { return }
         COMMENT_REF.child(postId).observe(.childAdded) { (snapshot) in

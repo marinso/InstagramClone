@@ -91,7 +91,7 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
             let photo = photoImageView.image,
             let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        guard let uploatData = photo.jpegData(compressionQuality: 0.5) else { return }
+        guard let uploatData = photo.jpegData(compressionQuality: 1) else { return }
         
         let creationDate = Int(NSDate().timeIntervalSince1970)
         let filename = NSUUID().uuidString
@@ -118,12 +118,17 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
                 
                 let postId = NSUUID().uuidString
                 
+                
                 POST_REF.child(postId).updateChildValues(values, withCompletionBlock: { (err, ref) in
                     if let error = error {
                         print("Failet to update child values", error.localizedDescription)
                     }
                     
                     USER_POSTS_REF.child(currentUid).updateChildValues([postId: 1])
+                    
+                    self.uploadHashtagToServer(with: postId)
+                    
+                    self.uploadMentionNotification(for: postId, with: capation, isForComment: false)
                     
                     self.upadateUserFeeds(with: postId)
                     
@@ -135,7 +140,7 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
         }
     }
     
-    func textViewDidChange(_ textView: UITextView) {
+    internal func textViewDidChange(_ textView: UITextView) {
         guard !textView.text.isEmpty else {
             shareButton.isEnabled = false
             shareButton.backgroundColor = UIColor(red: 149/255, green: 204/255, blue: 244/255, alpha: 1)
@@ -144,6 +149,25 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
         
         shareButton.backgroundColor = UIColor(red: 17/255, green: 153/255, blue: 237/255, alpha: 1)
         shareButton.isEnabled = true
+    }
+    
+    // MARK: - API
+    
+    private func uploadHashtagToServer(with postId: String) {
+        guard let capation = capationTextView.text else { return }
+        
+        let words: [String] = capation.components(separatedBy: .whitespacesAndNewlines)
+        
+        for var word in words {
+            if word.hasPrefix("#") {
+                word = word.trimmingCharacters(in: .punctuationCharacters)
+                word = word.trimmingCharacters(in: .symbols)
+                
+                let hashtagValues = [postId:1]
+                
+                HASHTAG_POST_REF.child(word.lowercased()).updateChildValues(hashtagValues)
+            }
+        }
     }
 
 }

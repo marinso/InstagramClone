@@ -9,6 +9,7 @@
 import UIKit
 import FirebaseAuth
 import FirebaseDatabase
+import ActiveLabel
 
 private let reuseIdentifier = "FeedCell"
 
@@ -19,6 +20,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     var posts = [Post]()
     var viewSinglePost = false
     var post: Post?
+    var currentKey: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,6 +102,14 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     // MARK: - UICollectionViewDataSource
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if posts.count > 4 {
+            if indexPath.item == posts.count - 1 {
+                fetchPosts()
+            }
+        }
+    }
 
     internal override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -116,15 +126,47 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     internal override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! FeedCell
         cell.delegate = self
+        
         if viewSinglePost {
             cell.post = post
         } else {
             cell.post = posts[indexPath.row]
         }
+        
+        handleHashtagTapped(forCell: cell)
+        handleUsernameLabelTapped(forCell: cell)
+        handleMentionTapped(forCell: cell)
+        
         return cell
     }
     
     // MARK: - Handlers
+    
+    func handleHashtagTapped(forCell cell: FeedCell) {
+        cell.captionLabel.handleHashtagTap { (hashtag) in
+            let hashtagController = HashtagController(collectionViewLayout: UICollectionViewFlowLayout())
+            hashtagController.hashtag = hashtag
+            self.navigationController?.pushViewController(hashtagController, animated: true)
+        }
+    }
+    
+    func handleUsernameLabelTapped(forCell cell: FeedCell) {
+        guard let user = cell.post?.user else { return }
+        guard let username = user.username else { return }
+        let customType = ActiveType.custom(pattern: "^\(username)\\b")
+
+        cell.captionLabel.handleCustomTap(for: customType) { (username) in
+            let userProfileController = UserProfileVC(collectionViewLayout: UICollectionViewFlowLayout())
+            userProfileController.user = user
+            self.navigationController?.pushViewController(userProfileController, animated: true)
+        }
+    }
+    
+    func handleMentionTapped(forCell cell: FeedCell) {
+        cell.captionLabel.handleMentionTap { (username) in
+            self.getMentionedUser(withUsername: username)
+        }
+    }
     
     func handleShowLikes(for cell: FeedCell) {
         guard let postId = cell.post?.uid else { return }
@@ -136,6 +178,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     
     @objc func handleRefresh() {
         posts.removeAll(keepingCapacity: true)
+        currentKey = nil
         fetchPosts()
         collectionView.reloadData()
     }
@@ -197,20 +240,60 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
         
-        USER_FEED_REF.child(currentUid).observe(.childAdded) { (snapshot) in
-            
-            let postId = snapshot.key
-            
-            Database.fetchPost(with: postId) { (post) in
-                self.posts.append(post)
+        if currentKey == nil {
+            USER_FEED_REF.child(currentUid).queryLimited(toLast: 5).observeSingleEvent(of: .value) { (snapshot) in
                 
-                self.posts.sort { (post1, post2) -> Bool in
-                    return post1.creationDate > post2.creationDate
-                }
                 self.collectionView.refreshControl?.endRefreshing()
-                self.collectionView.reloadData()
+                
+                guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
+                guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                
+                allObjects.forEach { (snapshot) in
+                    let postId = snapshot.key
+                    self.fetchPost(withPostId: postId)
+                }
+                
+                self.currentKey = first.key
             }
+        } else {
+            USER_FEED_REF.child(currentUid).queryOrderedByKey().queryEnding(atValue: self.currentKey).queryLimited(toLast: 6).observeSingleEvent(of: .value) { (snapshot) in
+                guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
+                guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                
+                allObjects.forEach { (snapshot) in
+                    let postId = snapshot.key
+                    if postId != self.currentKey {
+                        self.fetchPost(withPostId: postId)
+                    }
+                }
+                self.currentKey = first.key
+            }
+        }
+    }
+    
+    private func fetchPost(withPostId postId: String) {
+        Database.fetchPost(with: postId) { (post) in
+            self.posts.append(post)
+            
+            self.posts.sort { (post1, post2) -> Bool in
+                return post1.creationDate > post2.creationDate
+            }
+            self.collectionView.reloadData()
         }
     }
 }
 
+/* USER_FEED_REF.child(currentUid).observe(.childAdded) { (snapshot) in
+           
+           let postId = snapshot.key
+           
+           Database.fetchPost(with: postId) { (post) in
+               self.posts.append(post)
+               
+               self.posts.sort { (post1, post2) -> Bool in
+                   return post1.creationDate > post2.creationDate
+               }
+               self.collectionView.refreshControl?.endRefreshing()
+               self.collectionView.reloadData()
+           }
+ }*/

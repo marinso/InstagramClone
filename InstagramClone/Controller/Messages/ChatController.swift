@@ -21,7 +21,7 @@ class ChatController: UICollectionViewController, UICollectionViewDelegateFlowLa
     lazy var containerView: UIView = {
         let containerView = UIView()
         containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 55)
-        
+        containerView.backgroundColor = .white
 
         containerView.addSubview(sendButton)
         sendButton.anchor(top: nil, bottom: nil, left: nil, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 8, width: 50, height: 0)
@@ -31,9 +31,10 @@ class ChatController: UICollectionViewController, UICollectionViewDelegateFlowLa
         messageTextField.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: sendButton.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 12, paddingRight: 8, width: 0, height: 0)
         
         let separatorView = UIView()
-        separatorView.backgroundColor = .lightGray
+        separatorView.backgroundColor = .gray
+        
         containerView.addSubview(separatorView)
-        separatorView.anchor(top: containerView.topAnchor, bottom: nil, left: containerView.leftAnchor, right: containerView.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0.5)
+        separatorView.anchor(top: containerView.topAnchor, bottom: nil, left: containerView.leftAnchor, right: containerView.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 20)
     
         return containerView
     }()

@@ -100,9 +100,7 @@ class MainTabVC: UITabBarController, UITabBarControllerDelegate {
         self.notificationsIDs.removeAll()
         
         NOTIFICATIONS_REF.child(currentUid).observeSingleEvent(of: .value) { (snapshot) in
-            
-            let notificationId = snapshot.key
-            
+                        
             guard let allObject = snapshot.children.allObjects as? [DataSnapshot] else { return }
             
             allObject.forEach { (snapshot) in

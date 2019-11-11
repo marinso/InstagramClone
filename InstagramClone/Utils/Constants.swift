@@ -27,9 +27,14 @@ let COMMENT_REF = DB_REF.child("comments")
 
 let NOTIFICATIONS_REF = DB_REF.child("notifications")
 
+let MESSAGES_REF = DB_REF.child("messages")
+let USER_MESSAGES_REF = DB_REF.child("user-messages")
+
+let HASHTAG_POST_REF = DB_REF.child("hashtag-post")
+
 let LIKE_INT_VALUE = 0
 let COMMENT_INT_VALUE = 1
 let FOLLOW_INT_VALUE = 2
+let COMMENT_MENTION_INT_VALUE = 3
+let POST_MENTION_INT_VALUE = 3
 
-let MESSAGES_REF = DB_REF.child("messages")
-let USER_MESSAGES_REF = DB_REF.child("user-messages")
