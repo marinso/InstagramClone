@@ -34,3 +34,7 @@ protocol NotificationCellDelegate {
 protocol Printable {
     var description: String { get }
 }
+
+protocol CommentInputAcessoryViewDelegate {
+    func didSubmit(forComment comment: String)
+}

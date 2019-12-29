@@ -21,6 +21,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     var viewSinglePost = false
     var post: Post?
     var currentKey: String?
+    var userProfileController: UserProfileVC?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -91,7 +92,36 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     internal func handleOptionsTapped(for cell: FeedCell) {
-        print("options")
+        guard let post = cell.post else { return }
+        
+        if post.ownerUid == Auth.auth().currentUser?.uid {
+            let alertController = UIAlertController(title: "Option", message: nil, preferredStyle: .actionSheet)
+            
+            alertController.addAction(UIAlertAction(title: "Delete Post", style: .destructive, handler: { (_) in
+                post.deletePost()
+                
+                if !self.viewSinglePost {
+                    self.handleRefresh()
+                } else {
+                    if let userProfileController = self.userProfileController {
+                        self.navigationController?.popViewController(animated: true)
+                        userProfileController.handleRefresh()
+                    }
+                }
+            }))
+            
+            alertController.addAction(UIAlertAction(title: "Edit Post", style: .default, handler: { (_) in
+                let uploadPostController = UploadPostVC()
+                let navigationController = UINavigationController(rootViewController: uploadPostController)
+                uploadPostController.postToEdit = post
+                uploadPostController.uploadAction = UploadPostVC.UploadAction(index: 1)
+                self.present(navigationController, animated: true, completion: nil)
+            }))
+            
+            alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            
+            present(alertController, animated: true, completion: nil)
+        }
     }
     
     internal func handleCommentTapped(for cell: FeedCell) {
@@ -177,7 +207,7 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
     }
     
     @objc func handleRefresh() {
-        posts.removeAll(keepingCapacity: true)
+        posts.removeAll(keepingCapacity: false)
         currentKey = nil
         fetchPosts()
         collectionView.reloadData()
@@ -282,18 +312,3 @@ class FeedVC: UICollectionViewController, UICollectionViewDelegateFlowLayout, Fe
         }
     }
 }
-
-/* USER_FEED_REF.child(currentUid).observe(.childAdded) { (snapshot) in
-           
-           let postId = snapshot.key
-           
-           Database.fetchPost(with: postId) { (post) in
-               self.posts.append(post)
-               
-               self.posts.sort { (post1, post2) -> Bool in
-                   return post1.creationDate > post2.creationDate
-               }
-               self.collectionView.refreshControl?.endRefreshing()
-               self.collectionView.reloadData()
-           }
- }*/

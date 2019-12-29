@@ -233,6 +233,6 @@ class FeedCell: UICollectionViewCell {
             captionLabel.numberOfLines = 2
         }
         
-        postTimeLabel.text = "2 Dats AGO"
+        postTimeLabel.text = post?.creationDate.timeAgoToDisplay()
     }
 }

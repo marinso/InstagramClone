@@ -20,12 +20,16 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     var posts = [Post]()
     var currentKey:String?
     
+    // MARK: - Init
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         self.collectionView!.register(UserPostCell.self, forCellWithReuseIdentifier: reuseIdentifier)
         self.collectionView!.register(ProfileHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerIdentifier)
         self.collectionView.backgroundColor = .white
+        
+        configureRefreshControl()
         
         if user == nil {
             fetchUserData()
@@ -69,8 +73,11 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let feedVC = FeedVC(collectionViewLayout: UICollectionViewFlowLayout())
+        
         feedVC.viewSinglePost = true
+        feedVC.userProfileController = self
         feedVC.post = posts[indexPath.row]
+        
         navigationController?.pushViewController(feedVC, animated: true)
     }
     
@@ -91,6 +98,21 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 1
+    }
+    
+    // MARK: - Handlers
+    
+    @objc func handleRefresh() {
+        posts.removeAll(keepingCapacity: false)
+        currentKey = nil
+        fetchPosts()
+        collectionView.reloadData()
+    }
+    
+    func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        collectionView.refreshControl = refreshControl
     }
     
     // MARK: - API
@@ -214,9 +236,13 @@ class UserProfileVC: UICollectionViewController, UICollectionViewDelegateFlowLay
         guard let user = header.user else { return }
         
         if header.editProfileFollowButton.titleLabel?.text == "Edit Profile" {
-            
-           // show edit profile vc
-            
+
+            let editProfileController = EditProfileController()
+            editProfileController.user = self.user
+            editProfileController.userProfileController = self
+            let navigationController = UINavigationController(rootViewController: editProfileController)
+            present(navigationController, animated: true, completion: nil)
+
         } else {
             if header.editProfileFollowButton.titleLabel?.text == "Follow" {
                header.editProfileFollowButton.setTitle("Unfollow", for: .normal)

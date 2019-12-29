@@ -14,6 +14,8 @@ private let postIdentyfierCell = "SearchPostCell"
 
 class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
+    // MARK: - Properties
+    
     private var posts = [Post]()
     private var users = [User]()
     private var filteredUsers = [User]()
@@ -24,6 +26,8 @@ class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDele
     private var postCurrentKey: String?
     private var userCurrentKey: String?
     
+    // MARK: - Init
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.backgroundColor = .white
@@ -32,6 +36,7 @@ class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDele
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 64, bottom: 0, right: 0)
         confiugureSearchBar()
         configureCollectionView()
+        configureRefreshControl()
         fetchPosts()
     }
 
@@ -193,15 +198,33 @@ class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDele
         tableView.reloadData()
     }
     
+    // MARK: - Handlers
     
+    @objc func handleRefresh() {
+        posts.removeAll(keepingCapacity: false)
+        self.postCurrentKey = nil
+        fetchPosts()
+        collectionView.reloadData()
+    }
+       
+    func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(handleRefresh), for: .valueChanged)
+        tableView.refreshControl = refreshControl
+    }
+       
     
     // MARK: - API
     
     private func fetchUsers() {
+        
         if userCurrentKey == nil {
+                        
             USER_REF.queryLimited(toLast: 4).observeSingleEvent(of: .value) { (snapshot) in
+                
                  guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
                  guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
+                
 
                 allObjects.forEach { (snapshot) in
                     let userId = snapshot.key
@@ -213,6 +236,7 @@ class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDele
                 }
                 self.userCurrentKey = first.key
             }
+            
         } else {
             USER_REF.queryLimited(toLast: 5).queryOrderedByKey().queryEnding(atValue: self.userCurrentKey).observeSingleEvent(of: .value) { (snapshot) in
                 guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
@@ -236,8 +260,11 @@ class SearchVC: UITableViewController, UISearchBarDelegate, UICollectionViewDele
     private func fetchPosts() {
         
         if postCurrentKey == nil {
+            
             POST_REF.queryLimited(toLast: 21).observeSingleEvent(of: .value) { (snapshot) in
                 
+                self.tableView.refreshControl?.endRefreshing()
+
                 guard let first = snapshot.children.allObjects.first as? DataSnapshot else { return }
                 guard let allObjects = snapshot.children.allObjects as? [DataSnapshot] else { return }
                 allObjects.forEach { (snapshot) in

@@ -15,11 +15,30 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
     
     // MARK: - Properties
     
-    var selectedImage: UIImage?
+    enum UploadAction {
+        
+        case UploadPost
+        case SaveChanges
+        
+        init(index: Int) {
+            switch index {
+            case 0:
+                self = .UploadPost
+            case 1:
+                self = .SaveChanges
+            default:
+                self = .UploadPost
+            }
+        }
+    }
     
-    let photoImageView: UIImageView = {
-       let image = UIImageView()
-        image.backgroundColor = .white
+    var selectedImage: UIImage?
+    var postToEdit: Post?
+    var uploadAction = UploadAction(index: 0)
+    
+    let photoImageView: CustomImageView = {
+       let image = CustomImageView()
+        image.backgroundColor = .lightGray
         image.contentMode = .scaleAspectFill
         image.clipsToBounds = true
         return image
@@ -38,16 +57,35 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
         button.setTitle("Share", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(handleSharePost), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleUploadAction), for: .touchUpInside)
         button.isEnabled = false
         return button
     }()
+    
+    // MARK: - Init
 
     override func viewDidLoad() {
         super.viewDidLoad()
         capationTextView.delegate = self
         configureUI()
         loadPhoto()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if uploadAction == .SaveChanges {
+            guard let post = self.postToEdit else { return }
+            shareButton.setTitle("Save Changes", for: .normal)
+            self.navigationItem.title = "Edit Post"
+            self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(handleCancel))
+            self.navigationController?.navigationBar.tintColor = .black
+            photoImageView.loadImage(with: post.imageUrl)
+            capationTextView.text = post.capation
+        } else {
+            shareButton.setTitle("Share", for: .normal)
+            self.navigationItem.title = "Upload Post"
+        }
     }
     
     // MARK: - UI
@@ -71,6 +109,9 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
     }
     
     // MARK: - Handlers
+    @objc func handleCancel() {
+        self.dismiss(animated: true, completion: nil)
+    }
     
     func upadateUserFeeds(with postId:String) {
         guard let currentUid = Auth.auth().currentUser?.uid else { return }
@@ -84,60 +125,81 @@ class UploadPostVC: UIViewController, UITextViewDelegate {
         USER_FEED_REF.child(currentUid).updateChildValues(values)
     }
     
-    @objc func handleSharePost() {
-
-        guard
-            let capation = capationTextView.text,
-            let photo = photoImageView.image,
-            let currentUid = Auth.auth().currentUser?.uid else { return }
+    @objc func handleUploadAction() {
         
-        guard let uploatData = photo.jpegData(compressionQuality: 1) else { return }
-        
-        let creationDate = Int(NSDate().timeIntervalSince1970)
-        let filename = NSUUID().uuidString
-        let storageRef = Storage.storage().reference().child("post_images").child(filename)
-        
-        storageRef.putData(uploatData, metadata: nil) { (metadata, error ) in
-            if let error = error {
-                print("Failed to upload image: ", error.localizedDescription)
-            }
-            
-            storageRef.downloadURL(completion: { (downloadURL, error) in
-                guard let profileImageUrl = downloadURL?.absoluteString else {
-                    print("DEBUG: Profile image url is nil")
-                    return
-                }
-                
-                let values = [
-                    "capation": capation,
-                    "image_url": profileImageUrl,
-                    "likes": 0,
-                    "owner_UID": currentUid,
-                    "creation_date": creationDate
-                    ] as [String: Any]
-                
-                let postId = NSUUID().uuidString
-                
-                
-                POST_REF.child(postId).updateChildValues(values, withCompletionBlock: { (err, ref) in
-                    if let error = error {
-                        print("Failet to update child values", error.localizedDescription)
-                    }
-                    
-                    USER_POSTS_REF.child(currentUid).updateChildValues([postId: 1])
-                    
-                    self.uploadHashtagToServer(with: postId)
-                    
-                    self.uploadMentionNotification(for: postId, with: capation, isForComment: false)
-                    
-                    self.upadateUserFeeds(with: postId)
-                    
-                    self.dismiss(animated: true, completion:  {
-                        self.tabBarController?.selectedIndex = 0
-                    })
-                })
-            })
+        switch self.uploadAction {
+        case .UploadPost:
+            handleUploadPost()
+        case .SaveChanges:
+            handleSavePostChanges()
         }
+    }
+    
+    func handleSavePostChanges() {
+        guard let post =  self.postToEdit else { return }
+        
+        let updatedCapation = capationTextView.text
+        
+        uploadHashtagToServer(with: post.uid)
+        
+        POST_REF.child(post.uid).child("capation").setValue(updatedCapation) { (error, ref) in
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+        
+    func handleUploadPost() {
+        guard
+              let capation = capationTextView.text,
+              let photo = photoImageView.image,
+              let currentUid = Auth.auth().currentUser?.uid else { return }
+          
+          guard let uploatData = photo.jpegData(compressionQuality: 1) else { return }
+          
+          let creationDate = Int(NSDate().timeIntervalSince1970)
+          let filename = NSUUID().uuidString
+          let storageRef = Storage.storage().reference().child("post_images").child(filename)
+          
+          storageRef.putData(uploatData, metadata: nil) { (metadata, error ) in
+              if let error = error {
+                  print("Failed to upload image: ", error.localizedDescription)
+              }
+              
+              storageRef.downloadURL(completion: { (downloadURL, error) in
+                  guard let profileImageUrl = downloadURL?.absoluteString else {
+                      print("DEBUG: Profile image url is nil")
+                      return
+                  }
+                  
+                  let values = [
+                      "capation": capation,
+                      "image_url": profileImageUrl,
+                      "likes": 0,
+                      "owner_UID": currentUid,
+                      "creation_date": creationDate
+                      ] as [String: Any]
+                  
+                  let postId = NSUUID().uuidString
+                  
+                  
+                  POST_REF.child(postId).updateChildValues(values, withCompletionBlock: { (err, ref) in
+                      if let error = error {
+                          print("Failet to update child values", error.localizedDescription)
+                      }
+                      
+                      USER_POSTS_REF.child(currentUid).updateChildValues([postId: 1])
+                      
+                      self.uploadHashtagToServer(with: postId)
+                      
+                      self.uploadMentionNotification(for: postId, with: capation, isForComment: false)
+                      
+                      self.upadateUserFeeds(with: postId)
+                      
+                      self.dismiss(animated: true, completion:  {
+                          self.tabBarController?.selectedIndex = 0
+                      })
+                  })
+              })
+          }
     }
     
     internal func textViewDidChange(_ textView: UITextView) {

@@ -133,13 +133,11 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
         guard let fullName = fullNameTextField.text else { return }
         
         Auth.auth().createUser(withEmail: email, password: password) { (authResult, error) in
-            // handle error
             if let error = error {
                 print("Failed to create user with error: ", error.localizedDescription)
                 return
             }
             
-            // set picture
             guard let image = self.addPhotoButton.imageView?.image else { return }
             guard let imageData = image.jpegData(compressionQuality: 0.3) else { return }
         
@@ -147,10 +145,8 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
             
             let storageRef = Storage.storage().reference().child("profile_images").child(filename)
             
-            // save user image to database
             storageRef.putData(imageData, metadata: nil, completion: { (metadata, error) in
                 
-                // handle error
                 if let error = error {
                     print("Failed to upload image to Firebase Storage with error", error.localizedDescription)
                     return
@@ -162,7 +158,6 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                         return
                     }
                     
-                    // user id
                     guard let uid = authResult?.user.uid else { return }
                     
                     let dictionaryValues = ["name": fullName,
@@ -171,7 +166,6 @@ class SignUpVC: UIViewController, UIImagePickerControllerDelegate, UINavigationC
                     
                     let values = [uid: dictionaryValues]
                     
-                    // save user info to database
                     Database.database().reference().child("users").updateChildValues(values, withCompletionBlock: { (error, ref) in
                         if let error = error {
                             print("DEBUG: Failed saving data to firebase", error.localizedDescription)

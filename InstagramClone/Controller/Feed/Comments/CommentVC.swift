@@ -15,56 +15,24 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     // MARK: - Properties
     
-    open var post: Post?
-    private var comments = [Comment]()
+    var post: Post?
+    var comments = [Comment]()
     
-    
-    private let commentTextField: UITextField = {
-        let tf = UITextField()
-        tf.placeholder = "Enter comment.."
-        tf.font = UIFont.systemFont(ofSize: 14)
-        return tf
-    }()
-    
-    private lazy var containerView: UIView = {
-        let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+    lazy var containerView: CommentInputAccesoryView = {
         
-        containerView.addSubview(postButton)
-        postButton.anchor(top: nil, bottom: nil, left: nil, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 8, width: 50, height: 0)
-        postButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 50)
+        let containerView = CommentInputAccesoryView(frame: frame)
+        containerView.delegate = self
         
-        containerView.addSubview(commentTextField)
-        commentTextField.anchor(top: containerView.topAnchor, bottom: containerView.bottomAnchor, left: containerView.leftAnchor, right: postButton.leftAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 8, paddingRight: 0, width: 0, height: 0)
-        
-        containerView.addSubview(separatorView)
-        separatorView.anchor(top: containerView.topAnchor, bottom: nil, left: containerView.leftAnchor, right: containerView.rightAnchor, paddingTop: 0, paddingBottom: 0, paddingLeft: 0, paddingRight: 0, width: 0, height: 0.5)
-        containerView.backgroundColor = .white
         return containerView
-    }()
-    
-    private let postButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("Post", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
-        button.addTarget(self, action: #selector(handleUploadComment), for: .touchUpInside)
-        return button
-    }()
-    
-    private let separatorView:UIView = {
-       let separator = UIView()
-        separator.backgroundColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
-        return separator
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         collectionView.backgroundColor = .white
         collectionView.alwaysBounceVertical = true
         collectionView.keyboardDismissMode = .interactive
-        
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
         collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: -50, right: 0)
         
@@ -128,25 +96,6 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
     
     // MARK: - Handlers
     
-    @objc func handleUploadComment() {
-        
-        guard let postId = post?.uid else { return }
-        guard let commentText = commentTextField.text else { return }
-        guard let userId = Auth.auth().currentUser?.uid else { return }
-        let creationDate = Int(NSDate().timeIntervalSince1970)
-        
-        let values = ["commentText": commentText,
-                      "creationDate": creationDate,
-                      "userId": userId] as [String : Any]
-        
-        COMMENT_REF.child(postId).childByAutoId().updateChildValues(values) { (ref, err) in
-            self.uploadCommentNotificationToServer()
-            self.uploadMentionNotification(for: postId, with: commentText, isForComment: true)
-
-            self.commentTextField.text = nil
-        }
-    }
-    
     private func handleMentionTapped(forCell cell: CommentCell) {
         cell.commentLabel.handleMentionTap { (username) in
             self.getMentionedUser(withUsername: username)
@@ -195,6 +144,29 @@ class CommentVC: UICollectionViewController, UICollectionViewDelegateFlowLayout 
         
         if userId != currentUid {
             NOTIFICATIONS_REF.child(userId).childByAutoId().updateChildValues(values)
+        }
+    }
+}
+
+extension CommentVC: CommentInputAcessoryViewDelegate {
+    func didSubmit(forComment comment: String) {
+        
+        guard let postId = post?.uid else { return }
+        guard let userId = Auth.auth().currentUser?.uid else { return }
+        let creationDate = Int(NSDate().timeIntervalSince1970)
+
+        let values = ["commentText": comment,
+                     "creationDate": creationDate,
+                     "userId": userId] as [String : Any]
+
+        COMMENT_REF.child(postId).childByAutoId().updateChildValues(values) { (ref, err) in
+            self.uploadCommentNotificationToServer()
+        
+            if comment.contains("@") {
+                self.uploadMentionNotification(for: postId, with: comment, isForComment: true)
+            }
+            
+            self.containerView.clearCommentTextView()
         }
     }
 }
