@@ -9,7 +9,7 @@ implemented:
 - delete post
 - comment post
 - mentions ( link to profil )
-- hashtags ( and you can display linked post ) 
+- hashtags ( display linked posts ) 
 - direct messages
 - notifications
 - search users
