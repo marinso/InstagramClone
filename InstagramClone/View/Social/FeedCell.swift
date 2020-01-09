@@ -233,6 +233,6 @@ class FeedCell: UICollectionViewCell {
             captionLabel.numberOfLines = 2
         }
         
-        postTimeLabel.text = post?.creationDate.timeAgoToDisplay()
+        postTimeLabel.text = post?.creationDate.timeAgoToDisplay
     }
 }

@@ -627,6 +627,7 @@
 			baseConfigurationReference = 5DBC7EBB6516BA03DEA1A857 /* Pods-InstagramClone.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = InstagramClone/InstagramClone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K4UL6WL48A;
 				INFOPLIST_FILE = InstagramClone/Info.plist;
@@ -647,6 +648,7 @@
 			baseConfigurationReference = 09E025D4202CD5854FCA5A78 /* Pods-InstagramClone.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = InstagramClone/InstagramClone.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = K4UL6WL48A;
 				INFOPLIST_FILE = InstagramClone/Info.plist;
